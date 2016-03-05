@@ -1,0 +1,45 @@
+body{
+    font-family: "Open Sans", sans-serif;
+    font-weight: 600;
+    background-image: url('../images/darkdenim3.png');
+    padding: 0 10px 0 10px;
+}
+
+.btn-default{
+    border-color: #000;
+}
+
+.form-control{
+    color: #000;
+}
+
+.navbar{
+    background-color: #fff;
+    color: #000;
+    text-transform: uppercase;
+    padding: 10px 0 10px 0;
+    margin-top: 5px;
+}
+
+.navbar-default .navbar-nav li a{
+    color: #000;
+}
+
+.navbar-default .navbar-nav li a:hover{
+    text-decoration: underline;
+}
+
+.mainBody{
+    color: #F1B82D;
+    font-size: 16px;
+    text-shadow: 1px   1px  2px   black;
+}
+
+#loginBtn{
+    background-color: #F1B82D;
+    color: #000;
+}
+
+#headerBar{
+    box-shadow: 0 10px 6px -6px #000;
+}
