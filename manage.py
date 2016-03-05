@@ -14,4 +14,8 @@ if __name__ == '__main__':
             user = models.User(username=username, password=bcrypt.generate_password_hash(password), approved=True)
             db.session.add(user)
             db.session.commit()
+        if not models.Student.query.filter_by(pawprint='rvts6').first():
+            student = models.Student('rvts6', 'Reid', 'Vardell')
+            db.session.add(student)
+            db.session.commit()
     app.run()

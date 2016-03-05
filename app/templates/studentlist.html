@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Student Center Point Tracker - Student List{% endblock %}
+
+{% block content %}
+<div class="container mainBody">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Last Name</th>
+                <th>First Name</th>
+                <th>PawPrint</th>
+                <th>Point Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr class='studentListRow' onclick="window.location.href = '{{url_for(".student", pawprint=student.pawprint)}}';">
+                <td>{{ student.lname }}</td>
+                <td>{{ student.fname }}</td>
+                <td>{{ student.pawprint }}</td>
+                <td>{{ student.pointTotal }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

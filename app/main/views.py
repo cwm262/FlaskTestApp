@@ -1,8 +1,8 @@
 import bcrypt
-from flask import request, render_template, flash, session, redirect, url_for
+from flask import request, render_template, flash, session, redirect, url_for, abort
 from flask.ext.login import login_required, login_user, current_user, logout_user
 from flask.ext.bcrypt import Bcrypt
-from ..models import User
+from ..models import User, Student
 from .forms import LoginForm
 from . import main
 from .. import login_manager, db
@@ -14,8 +14,9 @@ def not_found(error):
 
 
 @main.route('/')
-@login_required
 def index():
+    if not current_user.is_authenticated:
+        return redirect(url_for('.login'))
     return render_template('index.html')
 
 
@@ -44,14 +45,32 @@ def login():
 
 
 @main.route('/logout')
-@login_required
 def logout():
+    if not current_user.is_authenticated:
+        return redirect(url_for('.login'))
     user = current_user
     user.authenticated = False
     db.session.add(user)
     db.session.commit()
     logout_user()
     return redirect(url_for('.login'))
+
+
+@main.route('/studentlist')
+def studentlist():
+    if not current_user.is_authenticated:
+        return redirect(url_for('.login'))
+    students = Student.query.order_by(Student.lname).all()
+    return render_template("studentlist.html", students=students)
+
+
+@main.route('/student/<pawprint>')
+def student(pawprint):
+    student = Student.query.filter_by(pawprint=pawprint).first()
+    if student is None:
+        abort(404)
+    return render_template('student.html', student=student)
+
 
 
 @login_manager.user_loader

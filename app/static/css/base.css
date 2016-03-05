@@ -5,10 +5,6 @@ body{
     padding: 0 10px 0 10px;
 }
 
-.btn-default{
-    border-color: #000;
-}
-
 .form-control{
     color: #000;
 }
@@ -17,7 +13,7 @@ body{
     background-color: #fff;
     color: #000;
     text-transform: uppercase;
-    padding: 10px 0 10px 0;
+    padding: 10px;
     margin-top: 5px;
 }
 
@@ -26,7 +22,7 @@ body{
 }
 
 .navbar-default .navbar-nav li a:hover{
-    text-decoration: underline;
+    color: #be8500;
 }
 
 .mainBody{
@@ -35,11 +31,29 @@ body{
     text-shadow: 1px   1px  2px   black;
 }
 
-#loginBtn{
+.btn-default{
+    border-color: #000;
     background-color: #F1B82D;
     color: #000;
+    font-weight: 600;
 }
+
+.btn-default:hover{
+    background-color: #ffd247;
+}
+
 
 #headerBar{
     box-shadow: 0 10px 6px -6px #000;
+}
+
+#navTitle{
+    font-size: 16px;
+    color: black;
+    text-decoration: none;
+}
+
+.studentListRow:hover{
+    cursor: pointer;
+    background-color: #1a1a1a;
 }

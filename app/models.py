@@ -1,4 +1,5 @@
 from app import db
+import datetime
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -32,12 +33,15 @@ class Student(db.Model):
     lname = db.Column(db.String(50))
     pointTotal = db.Column(db.Float, default=0)
     currentEmployee = db.Column(db.Boolean, default=0)
+    when_added = db.Column(db.DateTime)
     points = db.relationship('Point', backref='students', lazy='dynamic')
     warnings = db.relationship('Warn', backref='students', lazy='dynamic')
 
-    def __init__(self, fname, lname):
+    def __init__(self, pawprint, fname, lname):
+        self.pawprint = pawprint
         self.fname = fname
         self.lname = lname
+        self.when_added = datetime.datetime.today()
 
     def __repr__(self):
         return 'Id: %d' % self.id + '\n' + 'First Name: %r' % self.fname + '\n' + 'Last Name: %r' % self.lname + '\n' \
