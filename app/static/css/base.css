@@ -15,6 +15,7 @@ body{
     text-transform: uppercase;
     padding: 10px;
     margin-top: 5px;
+    border: 6px double black;
 }
 
 .navbar-default .navbar-nav li a{
@@ -23,6 +24,11 @@ body{
 
 .navbar-default .navbar-nav li a:hover{
     color: #be8500;
+    text-shadow: .25px  .25px  .25px   black;
+}
+
+.navbar-default .navbar-toggle .icon-bar{
+    background-color: #000000;
 }
 
 .mainBody{
@@ -36,10 +42,20 @@ body{
     background-color: #F1B82D;
     color: #000;
     font-weight: 600;
+    transition: all .2s ease-in-out;
 }
 
 .btn-default:hover{
-    background-color: #ffd247;
+    transform: scale(1.1);
+    background-color: #F1B82D;
+    border-color: #000;
+    color: #000;
+}
+
+.btn-default:active{
+    color: #000;
+    background-color: #F1B82D;
+    border-color: white;
 }
 
 
@@ -55,5 +71,13 @@ body{
 
 .studentListRow:hover{
     cursor: pointer;
-    background-color: #1a1a1a;
+    background-color: rgba(26, 26, 26, .5)
+}
+
+.close{
+    opacity: .5;
+}
+
+.close:hover{
+    opacity: .8;
 }

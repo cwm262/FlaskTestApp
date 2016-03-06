@@ -6,22 +6,10 @@
 {% block content %}
 <div class="container mainBody">
     <div class="col-md-6 col-md-offset-3">
-        <form role="form" method="post" autocomplete="off">
-            {{ form.hidden_tag() }}
-            {{ wtf.form_errors(form, hiddens="only") }}
-            {% if error %}
-            <p class="text-danger">{{ error }}</p>
-            {% endif %}
-            <div class="form-group">
-                <label for="username">Username: </label>
-                <input type="text" name="username" id="username" class="form-control" placeholder="Username">
-            </div>
-            <div class="form-group">
-                <label for="password">Password: </label>
-                <input type="password" name="password" id="password" class="form-control" placeholder="Password">
-            </div>
-            <button type="submit" class="btn btn-default" id="loginBtn" value="Login">Login</button>
-        </form>
+        {% if error %}
+        <p class="text-danger">{{ error }}</p>
+        {% endif %}
+        {{ wtf.quick_form(form) }}
     </div>
 </div>
 {% endblock %}

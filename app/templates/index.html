@@ -1,5 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
+    <div>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+                {% if category == 'message' %}
+                  <div class="alert alert-warning" role="alert">
+                {% else %}
+                  <div class="alert alert-{{ category }}" role="alert">
+                {% endif %}
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                  {{ message }}
+                </div>
+            {% endfor %}
+          {% endif %}
+      {% endwith %}
+    </div>
     <div class="container mainBody">
         <h1>Hello, {{ current_user.username }}!</h1>
         Welcome to MU CDS Student Center Point Tracker.

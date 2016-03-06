@@ -9,9 +9,6 @@ class User(db.Model):
     authenticated = db.Column(db.BOOLEAN, default=False)
     approved = db.Column(db.BOOLEAN, default=False)
 
-    def is_approved(self):
-        return self.approved
-
     def is_active(self):
         return True
 
@@ -32,7 +29,7 @@ class Student(db.Model):
     fname = db.Column(db.String(50))
     lname = db.Column(db.String(50))
     pointTotal = db.Column(db.Float, default=0)
-    currentEmployee = db.Column(db.Boolean, default=0)
+    currentEmployee = db.Column(db.Boolean, default=True)
     when_added = db.Column(db.DateTime)
     points = db.relationship('Point', backref='students', lazy='dynamic')
     warnings = db.relationship('Warn', backref='students', lazy='dynamic')

@@ -4,6 +4,20 @@
 
 {% block content %}
 <div class="container mainBody">
-    This is the page for {{ student.lname }}
+    <h1>{{ student.lname }}, {{ student.fname }}</h1>
+    <p>
+        Pawprint: {{ student.pawprint }}
+    </p>
+    <p>
+        <a href="mailto:{{ student.pawprint }}@mail.missouri.edu">{{ student.pawprint }}@mail.missouri.edu</a>
+    </p>
+    <p>
+        In tracker since: {{ student.when_added }}<br>
+        ( <i>That's {{ time - student.when_added }}</i> )
+    </p>
+    <p>
+        Point Total: {{ student.pointTotal }}
+    </p>
+    <hr>
 </div>
 {% endblock %}

@@ -18,4 +18,8 @@ if __name__ == '__main__':
             student = models.Student('rvts6', 'Reid', 'Vardell')
             db.session.add(student)
             db.session.commit()
+        if not models.Student.query.filter_by(pawprint='ted4').first():
+            student = models.Student('ted4', 'Ted', 'Thomas')
+            db.session.add(student)
+            db.session.commit()
     app.run()
