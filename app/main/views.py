@@ -2,7 +2,7 @@ import bcrypt
 from flask import request, render_template, flash, session, redirect, url_for, abort
 from flask.ext.login import login_required, login_user, current_user, logout_user
 from flask.ext.bcrypt import Bcrypt
-from ..models import User, Student
+from ..models import User, Student, Point
 from .forms import LoginForm
 from . import main
 from .. import login_manager, db
@@ -74,8 +74,9 @@ def student(pawprint):
     student = Student.query.filter_by(pawprint=pawprint).first()
     if student is None:
         abort(404)
+    points = Point.query.filter_by(student_id=pawprint).all()
     now = datetime.datetime.today()
-    return render_template('student.html', student=student, time=now)
+    return render_template('student.html', student=student, time=now, points=points)
 
 
 @main.route('/profile/<username>')
@@ -86,6 +87,15 @@ def profile(username):
         return redirect(url_for('.index'))
     user = User.query.get(username)
     return render_template('profile.html', user=user)
+
+
+@main.route('/points')
+def points():
+    if not current_user.is_authenticated:
+        return redirect(url_for('.login'))
+    points = Point.query.order_by(Point.when).all()
+    students = Student.query.order_by(Student.lname).all()
+    return render_template("points.html", points=points, students=students)
 
 
 @login_manager.user_loader
