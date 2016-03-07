@@ -3,26 +3,34 @@
 {% block title %}Student Center Point Tracker - Student List{% endblock %}
 
 {% block content %}
-<div class="container mainBody">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Last Name</th>
-                <th>First Name</th>
-                <th>PawPrint</th>
-                <th>Point Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for student in students %}
-            <tr class='studentListRow' onclick="window.location.href = '{{url_for(".student", pawprint=student.pawprint)}}';">
-                <td>{{ student.lname }}</td>
-                <td>{{ student.fname }}</td>
-                <td>{{ student.pawprint }}</td>
-                <td>{{ student.pointTotal }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="container">
+    <div class="table-responsive panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Complete Student List, Sorted by Last Name</h3>
+        </div>
+        <div class="panel-body">
+            <small>Click a row to go to that student's page</small>
+        </div>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Last Name</th>
+                    <th>First Name</th>
+                    <th>PawPrint</th>
+                    <th>Point Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr class='studentListRow active' onclick="window.location.href = '{{url_for(".student", pawprint=student.pawprint)}}';">
+                    <td>{{ student.lname }}</td>
+                    <td>{{ student.fname }}</td>
+                    <td>{{ student.pawprint }}</td>
+                    <td>{{ student.pointTotal }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

@@ -22,4 +22,10 @@ if __name__ == '__main__':
             student = models.Student('ted4', 'Ted', 'Thomas')
             db.session.add(student)
             db.session.commit()
+        if not models.Point.query.filter_by(id='1').first():
+            point = models.Point(3, 'No call no show', 'bob', 'bob', 'rvts6')
+            db.session.add(point)
+            s = models.Student.query.filter_by(pawprint='rvts6').first()
+            s.pointTotal += 3
+            db.session.commit()
     app.run()

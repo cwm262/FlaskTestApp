@@ -27,7 +27,7 @@
             <ul class="nav navbar-nav">
                 {% if current_user.is_authenticated %}
                     <li><a href="/students">Students</a></li>
-                    <li><a href="#">Points History</a></li>
+                    <li><a href="/points">Points History</a></li>
                     <li><a href="#">Warning History</a></li>
                     <li><a href='{{url_for(".profile", username=current_user.username)}}'>{{ current_user.username }}</a></li>
                     <li><a href="/logout">Logout</a></li>

@@ -14,7 +14,6 @@ body{
     color: #000;
     text-transform: uppercase;
     padding: 10px;
-    margin-top: 5px;
     border: 6px double black;
 }
 
@@ -71,7 +70,6 @@ body{
 
 .studentListRow:hover{
     cursor: pointer;
-    background-color: rgba(26, 26, 26, .5)
 }
 
 .close{
@@ -80,4 +78,17 @@ body{
 
 .close:hover{
     opacity: .8;
+}
+
+.footer{
+    bottom: 0;
+    height: 40px;
+    background-color: #fff;
+    border: 6px double black;
+    color: #000;
+    text-transform: uppercase;
+}
+
+.panel{
+   box-shadow: 0 10px 6px -6px #000;
 }

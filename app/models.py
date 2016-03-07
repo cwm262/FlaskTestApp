@@ -1,6 +1,7 @@
 from app import db
 import datetime
 
+
 class User(db.Model):
     __tablename__ = 'users'
 
@@ -24,8 +25,7 @@ class User(db.Model):
 
 class Student(db.Model):
     __tablename__ = 'students'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    pawprint = db.Column(db.String(12), unique=True)
+    pawprint = db.Column(db.String(12), primary_key=True)
     fname = db.Column(db.String(50))
     lname = db.Column(db.String(50))
     pointTotal = db.Column(db.Float, default=0)
@@ -40,33 +40,27 @@ class Student(db.Model):
         self.lname = lname
         self.when_added = datetime.datetime.today()
 
-    def __repr__(self):
-        return 'Id: %d' % self.id + '\n' + 'First Name: %r' % self.fname + '\n' + 'Last Name: %r' % self.lname + '\n' \
-            + 'Point Total: %f' % self.pointTotal
-
-    def get_points(self):
-        return self.points
-
-    def get_warnings(self):
-        return self.warnings
-
-    def is_employee(self):
-        if self.currentEmployee == 0:
-            return True
-        return False
-
-    def get_point_total(self):
-        return self.pointTotal
-
 
 class Point(db.Model):
     __tablename__ = 'points'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    amount = db.Column(db.Float, nullable=False, default=1)
+    amount = db.Column(db.Float, nullable=False, default=0)
+    why = db.Column(db.String(140))
     when = db.Column(db.DateTime)
+    supervisor = db.Column(db.String(20))
     issuer_id = db.Column(db.String, db.ForeignKey('users.username'))
     issuer = db.relationship(User, uselist=False)
-    student_id = db.Column(db.Integer, db.ForeignKey('students.id'))
+    student_id = db.Column(db.String, db.ForeignKey('students.pawprint'))
+
+    def __init__(self, amount, why, supervisor, issuer_id, student_id):
+        self.amount = amount
+        self.why = why
+        self.when = datetime.datetime.today()
+        if supervisor is None:
+            self.supervisor = issuer_id
+        self.supervisor = supervisor
+        self.issuer_id = issuer_id
+        self.student_id = student_id
 
 
 class Warn(db.Model):
@@ -77,4 +71,4 @@ class Warn(db.Model):
     when = db.Column(db.DateTime)
     issuer_id = db.Column(db.String, db.ForeignKey('users.username'))
     issuer = db.relationship(User, uselist=False)
-    student_id = db.Column(db.Integer, db.ForeignKey('students.id'))
+    student_id = db.Column(db.String, db.ForeignKey('students.pawprint'))
