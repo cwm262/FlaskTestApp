@@ -3,9 +3,10 @@ from flask import request, render_template, flash, session, redirect, url_for, a
 from flask.ext.login import login_required, login_user, current_user, logout_user
 from flask.ext.bcrypt import Bcrypt
 from ..models import User, Student, Point
-from .forms import LoginForm
+from .forms import LoginForm, PointsForm
 from . import main
 from .. import login_manager, db
+from .pointcalc import PointCalc
 import datetime
 
 
@@ -69,14 +70,29 @@ def studentlist():
     return render_template("studentlist.html", students=students)
 
 
-@main.route('/students/<pawprint>')
+@main.route('/students/<pawprint>', methods=['GET', 'POST'])
 def student(pawprint):
+    if not current_user.is_authenticated:
+        return redirect(url_for('.login'))
     student = Student.query.filter_by(pawprint=pawprint).first()
     if student is None:
         abort(404)
-    points = Point.query.filter_by(student_id=pawprint).all()
+    form = PointsForm()
+    if form.validate_on_submit():
+        pointcalc = PointCalc(form)
+        amount = pointcalc.calc_amount()
+        try:
+            newpts = Point(amount, form.whyField.data, form.supervisorField.data, current_user.username, pawprint)
+            student.pointTotal += amount
+            db.session.add(newpts)
+            db.session.commit()
+            flash("Points issued.", 'success')
+            return redirect(url_for('.student', pawprint=pawprint))
+        except Exception as e:
+            abort(500)
+    points = Point.query.filter_by(student_id=pawprint).order_by(Point.when.desc()).all()
     now = datetime.datetime.today()
-    return render_template('student.html', student=student, time=now, points=points)
+    return render_template('student.html', student=student, time=now, points=points, form=form)
 
 
 @main.route('/profile/<username>')
@@ -93,7 +109,7 @@ def profile(username):
 def points():
     if not current_user.is_authenticated:
         return redirect(url_for('.login'))
-    points = Point.query.order_by(Point.when).all()
+    points = Point.query.order_by(Point.when.desc()).all()
     students = Student.query.order_by(Student.lname).all()
     return render_template("points.html", points=points, students=students)
 

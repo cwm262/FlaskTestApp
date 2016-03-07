@@ -7,6 +7,11 @@
       href="{{url_for('static', filename='css/base.css')}}">
 {% endblock %}
 
+{% block scripts %}
+{{super()}}
+<script src="{{url_for('static', filename='js/base.js')}}"></script>
+{% endblock %}
+
 {%  block title %}Student Center Point Tracker{% endblock %}
 
 {% block navbar %}

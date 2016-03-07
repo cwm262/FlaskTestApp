@@ -56,9 +56,10 @@ class Point(db.Model):
         self.amount = amount
         self.why = why
         self.when = datetime.datetime.today()
-        if supervisor is None:
+        if supervisor == '':
             self.supervisor = issuer_id
-        self.supervisor = supervisor
+        else:
+            self.supervisor = supervisor
         self.issuer_id = issuer_id
         self.student_id = student_id
 

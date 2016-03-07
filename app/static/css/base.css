@@ -41,20 +41,24 @@ body{
     background-color: #F1B82D;
     color: #000;
     font-weight: 600;
-    transition: all .2s ease-in-out;
 }
 
 .btn-default:hover{
-    transform: scale(1.1);
-    background-color: #F1B82D;
+    background-color: #D89F14;
     border-color: #000;
     color: #000;
 }
 
 .btn-default:active{
     color: #000;
-    background-color: #F1B82D;
-    border-color: white;
+    background-color: #FFD247;
+    border-color: #000;
+}
+
+.btn-default:focus{
+    color: #000;
+    background-color: #FFEB60;
+    border-color: #000;
 }
 
 

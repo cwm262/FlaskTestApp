@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% block content %}
     <div>
       {% with messages = get_flashed_messages(with_categories=true) %}
@@ -18,6 +19,22 @@
     </div>
     <div class="container mainBody">
         <h1>Hello, {{ current_user.username }}!</h1>
-        Welcome to MU CDS Student Center Point Tracker.
+        <p>
+            Welcome back to the MU CDS Student Center Point Tracker.
+        </p>
+        <p>
+            <small>This application was created to help you maintain disciprine</small>
+        </p>
+        <p>
+            <small>
+                Click on an option above to navigate through the application.<br>
+                >Students< will show you a complete list of all students currently in the tracker.<br>
+                >Points History< will show you a complete list of all points ever tracked.<br>
+                >Warning History< will show you a complete list of all warnings ever tracked.<br>
+                The link named after your username is your profile page. Here you can see all points/warnings ever
+                assigned by you.<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; You may also change your password there.
+            </small>
+        </p>
     </div>
-{% endblock content %}
+{% endblock %}

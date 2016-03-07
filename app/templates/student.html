@@ -1,29 +1,61 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}Student Center Point Tracker - {{ student.lname }}, {{ student.fname }}{% endblock %}
 
 {% block content %}
-<div class="container mainBody">
-    <h1>{{ student.lname }}, {{ student.fname }}</h1>
-    <p>
-        Pawprint: {{ student.pawprint }}
-    </p>
-    <p>
-        <a href="mailto:{{ student.pawprint }}@mail.missouri.edu">{{ student.pawprint }}@mail.missouri.edu</a>
-    </p>
-    <p>
-        In tracker since: {{ student.when_added }}<br>
-        ( <i>That's {{ time - student.when_added }}</i> )
-    </p>
-    <p>
-        Point Total: {{ student.pointTotal }}
-    </p>
-    <hr>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+        {% if category == 'message' %}
+          <div class="alert alert-warning" role="alert">
+        {% else %}
+          <div class="alert alert-{{ category }}" role="alert">
+        {% endif %}
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+          {{ message }}
+        </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3>{{ student.lname }}, {{ student.fname }}</h3>
+        </div>
+        <div class="panel-body">
+            Pawprint: {{ student.pawprint }}<hr>
+            <a href="mailto:{{ student.pawprint }}@mail.missouri.edu">{{ student.pawprint }}@mail.missouri.edu</a><hr>
+            In tracker since: {{ student.when_added }}<br>
+            ( <i>That's {{ time - student.when_added }}</i> )<hr>
+            Point Total: {{ student.pointTotal }}
+        </div>
+    </div>
 </div>
 <div class="container">
-    <div class="table-responsive panel panel-default">
+    <button class="btn btn-default center-block" data-toggle="collapse" data-target="#submitPtsForm">Toggle Submit Point Form</button>
+    <div id="submitPtsForm" class="panel panel-default collapse">
+        <div class="panel-heading">
+            Submit Points
+        </div>
+        <div class="panel-body">
+            {% if error %}
+            <p class="text-danger">{{ error }}</p>
+            {% endif %}
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+</div>
+<div class="container">
+    <button class="btn btn-default center-block" data-toggle="collapse" data-target="#ptHistory">Toggle Point History</button>
+    <div id="ptHistory" class="table-responsive panel panel-default collapse">
         <div class="panel-heading">
             <h3 class="panel-title">Point History, Ordered by Date</h3>
+        </div>
+        <div class="panel-body">
+            <div class="input-group"> <span class="input-group-addon">Filter</span>
+                <input id="filter" type="text" class="form-control" placeholder="Type here...">
+            </div>
         </div>
         <table class="table table-bordered table-hover">
             <thead>
@@ -35,7 +67,7 @@
                     <th>Manager</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="searchable">
                 {% for point in points %}
                 <tr class='studentListRow active'>
                     <td>{{ point.when }}</td>

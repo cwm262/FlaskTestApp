@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms.fields import PasswordField, StringField, SubmitField, BooleanField
+from wtforms.fields import PasswordField, StringField, SubmitField, BooleanField, SelectField
 from wtforms.validators import DataRequired, optional, Length
 
 
@@ -23,7 +23,11 @@ class PointsForm(Form):
     headPhone = BooleanField('Headphone Use [1 point]', validators=[optional()])
     callInWNotice = BooleanField('Called-In w/ Prior Notice [.5 point]', validators=[optional()])
     missedMeeting = BooleanField('Missed Employee Meeting [.5 point]', validators=[optional()])
+    other = SelectField('Other', choices=[('', ''), ('.25', '.25 points'), ('.5', '.5 points'), ('.75', '.75 points'), \
+                                          ('1', '1 point'), ('1.5', '1.5 points'), ('2', '2 points'), \
+                                          ('2.5', '2.5 points'), ('3', '3 points')], validators=[optional()])
     whyField = StringField('Briefly (in < 140 characters) describe why you are giving points: ', \
                            validators=[Length(min=3, max=140)])
-    supervisorField = StringField('Are you giving points on behalf of a supervisor? If so, enter their pawprint: ', \
-                                  validators=[Length(max=20), optional()])
+    supervisorField = StringField("Are you giving points on behalf of a supervisor? If so, enter their pawprint: \
+                                  (Otherwise, this will say your username)", validators=[Length(max=20), optional()])
+    submit = SubmitField('Submit')
