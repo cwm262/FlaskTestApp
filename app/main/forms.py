@@ -26,6 +26,7 @@ class PointsForm(Form):
     other = SelectField('Other', choices=[('', ''), ('.25', '.25 points'), ('.5', '.5 points'), ('.75', '.75 points'), \
                                           ('1', '1 point'), ('1.5', '1.5 points'), ('2', '2 points'), \
                                           ('2.5', '2.5 points'), ('3', '3 points')], validators=[optional()])
+    warning = BooleanField('<strong>Is this a warning? [No points will be given if you check this box!]</strong>')
     whyField = StringField('Briefly (in < 140 characters) describe why you are giving points: ', \
                            validators=[Length(min=3, max=140)])
     supervisorField = StringField("Are you giving points on behalf of a supervisor? If so, enter their pawprint: \

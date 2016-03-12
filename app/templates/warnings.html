@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Student Center Point Tracker - Complete Point List{% endblock %}
+{% block title %}Student Center Point Tracker - Complete Warning List{% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="table-responsive panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">Point History, Ordered by Date</h3>
+            <h3 class="panel-title">Warning History, Ordered by Date</h3>
         </div>
         <div class="panel-body">
             <div class="input-group"> <span class="input-group-addon">Filter</span>
@@ -18,24 +18,22 @@
             <thead>
                 <tr>
                     <th>Date Assigned</th>
-                    <th>Type</th>
+                    <th>Type of Warning</th>
                     <th>Why</th>
                     <th>Student's PawPrint</th>
-                    <th>Amount</th>
                     <th>Supervisor</th>
                     <th>Manager</th>
                 </tr>
             </thead>
             <tbody class="searchable">
-                {% for point in points %}
-                <tr class='studentListRow active' onclick="window.location.href = '{{url_for(".student", pawprint=point.student_id)}}';">
-                    <td>{{ point.when }}</td>
-                    <td>{{ point.type }}</td>
-                    <td>{{ point.why }}</td>
-                    <td>{{ point.student_id }}</td>
-                    <td>{{ point.amount }}</td>
-                    <td>{{ point.supervisor }}</td>
-                    <td>{{ point.issuer_id }}</td>
+                {% for warn in warns %}
+                <tr class='studentListRow active' onclick="window.location.href = '{{url_for(".student", pawprint=warn.student_id)}}';">
+                    <td>{{ warn.when }}</td>
+                    <td>{{ warn.type }}</td>
+                    <td>{{ warn.why }}</td>
+                    <td>{{ warn.student_id }}</td>
+                    <td>{{ warn.supervisor }}</td>
+                    <td>{{ warn.issuer_id }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

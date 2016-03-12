@@ -2,11 +2,12 @@ import bcrypt
 from flask import request, render_template, flash, session, redirect, url_for, abort
 from flask.ext.login import login_required, login_user, current_user, logout_user
 from flask.ext.bcrypt import Bcrypt
-from ..models import User, Student, Point
+from ..models import User, Student, Point, Warn
 from .forms import LoginForm, PointsForm
 from . import main
 from .. import login_manager, db
 from .pointcalc import PointCalc
+from .typecalc import TypeCalc
 import datetime
 
 
@@ -79,20 +80,15 @@ def student(pawprint):
         abort(404)
     form = PointsForm()
     if form.validate_on_submit():
-        pointcalc = PointCalc(form)
-        amount = pointcalc.calc_amount()
         try:
-            newpts = Point(amount, form.whyField.data, form.supervisorField.data, current_user.username, pawprint)
-            student.pointTotal += amount
-            db.session.add(newpts)
-            db.session.commit()
-            flash("Points issued.", 'success')
+            do_punish(form, pawprint, student)
             return redirect(url_for('.student', pawprint=pawprint))
         except Exception as e:
             abort(500)
     points = Point.query.filter_by(student_id=pawprint).order_by(Point.when.desc()).all()
+    warns = Warn.query.filter_by(student_id=pawprint).order_by(Warn.when.desc()).all()
     now = datetime.datetime.today()
-    return render_template('student.html', student=student, time=now, points=points, form=form)
+    return render_template('student.html', student=student, time=now, points=points, warns=warns, form=form)
 
 
 @main.route('/profile/<username>')
@@ -114,7 +110,51 @@ def points():
     return render_template("points.html", points=points, students=students)
 
 
+@main.route('/warnings')
+def warnings():
+    if not current_user.is_authenticated:
+        return redirect(url_for('.login'))
+    warns = Warn.query.order_by(Warn.when.desc()).all()
+    students = Student.query.order_by(Student.lname).all()
+    return render_template("warnings.html", warns=warns, students=students)
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
 
+
+def do_punish(form, pawprint, student):
+    try:
+        give_points(form, pawprint, student)
+    except Exception as e:
+        give_warnings(form, pawprint)
+
+
+def give_points(form, pawprint, student):
+    pointcalc = PointCalc(form)
+    amount = pointcalc.calc_amount()
+    if amount == 0:
+        raise Exception('Is warning instead')
+    try:
+        tc = TypeCalc(form)
+        typeOf = tc.get_type()
+        newpts = Point(amount, typeOf, form.whyField.data, form.supervisorField.data, current_user.username, pawprint)
+        student.pointTotal += amount
+        db.session.add(newpts)
+        db.session.commit()
+        flash("Points issued.", 'success')
+    except Exception as e:
+        raise Exception('Something went wrong: ' + e)
+
+
+def give_warnings(form, pawprint):
+    typeCalc = TypeCalc(form)
+    warnType = typeCalc.get_type()
+    try:
+        newWarning = Warn(warnType, form.whyField.data, form.supervisorField.data, current_user.username, pawprint)
+        db.session.add(newWarning)
+        db.session.commit()
+        flash("Warning issued.", 'success')
+    except Exception as e:
+        raise Exception('Something went wrong: ' + e)

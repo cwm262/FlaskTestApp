@@ -61,6 +61,7 @@
             <thead>
                 <tr>
                     <th>Date Assigned</th>
+                    <th>Type</th>
                     <th>Why</th>
                     <th>Amount</th>
                     <th>Supervisor</th>
@@ -71,10 +72,48 @@
                 {% for point in points %}
                 <tr class='studentListRow active'>
                     <td>{{ point.when }}</td>
+                    <td>{{ point.type }}</td>
                     <td>{{ point.why }}</td>
                     <td>{{ point.amount }}</td>
                     <td>{{ point.supervisor }}</td>
                     <td>{{ point.issuer_id }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="container">
+    <button class="btn btn-default center-block" data-toggle="collapse" data-target="#warnHistory">Toggle Warning History</button>
+    <div id="warnHistory" class="table-responsive panel panel-default collapse">
+        <div class="panel-heading">
+            <h3 class="panel-title">Warn History, Ordered by Date</h3>
+        </div>
+        <div class="panel-body">
+            <div class="input-group"> <span class="input-group-addon">Filter</span>
+                <input id="filter" type="text" class="form-control" placeholder="Type here...">
+            </div>
+        </div>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Date Assigned</th>
+                    <th>Type of Warning</th>
+                    <th>Why</th>
+                    <th>Student's PawPrint</th>
+                    <th>Supervisor</th>
+                    <th>Manager</th>
+                </tr>
+            </thead>
+            <tbody class="searchable">
+                {% for warn in warns %}
+                <tr class='studentListRow active'>
+                    <td>{{ warn.when }}</td>
+                    <td>{{ warn.type }}</td>
+                    <td>{{ warn.why }}</td>
+                    <td>{{ warn.student_id }}</td>
+                    <td>{{ warn.supervisor }}</td>
+                    <td>{{ warn.issuer_id }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

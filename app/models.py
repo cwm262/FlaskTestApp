@@ -45,6 +45,7 @@ class Point(db.Model):
     __tablename__ = 'points'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     amount = db.Column(db.Float, nullable=False, default=0)
+    type = db.Column(db.String(30), nullable=False)
     why = db.Column(db.String(140))
     when = db.Column(db.DateTime)
     supervisor = db.Column(db.String(20))
@@ -52,8 +53,9 @@ class Point(db.Model):
     issuer = db.relationship(User, uselist=False)
     student_id = db.Column(db.String, db.ForeignKey('students.pawprint'))
 
-    def __init__(self, amount, why, supervisor, issuer_id, student_id):
+    def __init__(self, amount, type, why, supervisor, issuer_id, student_id):
         self.amount = amount
+        self.type = type
         self.why = why
         self.when = datetime.datetime.today()
         if supervisor == '':
@@ -67,9 +69,21 @@ class Point(db.Model):
 class Warn(db.Model):
     __tablename__ = 'warns'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    type = db.Column(db.Integer, nullable=False)
-    why = db.String(db.String(140))
+    type = db.Column(db.String(30), nullable=False)
+    why = db.Column(db.String(140))
     when = db.Column(db.DateTime)
+    supervisor = db.Column(db.String(20))
     issuer_id = db.Column(db.String, db.ForeignKey('users.username'))
     issuer = db.relationship(User, uselist=False)
     student_id = db.Column(db.String, db.ForeignKey('students.pawprint'))
+
+    def __init__(self, type, why, supervisor, issuer_id, student_id):
+        self.type = type
+        self.why = why
+        self.when = datetime.datetime.today()
+        if supervisor == '':
+            self.supervisor = issuer_id
+        else:
+            self.supervisor = supervisor
+        self.issuer_id = issuer_id
+        self.student_id = student_id

@@ -20,6 +20,9 @@ class PointCalc:
             'missedMeeting': .5
         }
         for field in self.form:
+            if field.name == 'warning':
+                if field.data is True:
+                    return 0
             if field.name == 'other':
                 try:
                     amount += float(field.data)

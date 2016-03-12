@@ -94,5 +94,28 @@ body{
 }
 
 .panel{
-   box-shadow: 0 10px 6px -6px #000;
+    box-shadow: 0 10px 6px -6px #000;
+    border-color: #000;
+}
+
+.panel-default>.panel-heading{
+    background-color: #F1B82D;
+}
+
+.panel-title{
+    font-weight: 600;
+}
+
+thead{
+    background-color: #F1B82D;
+}
+
+.input-group-addon{
+    color: #000;
+    background-color: #F1B82D;
+    border-color: #000;
+}
+
+.input-group .form-control{
+    border-color: #000;
 }
