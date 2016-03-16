@@ -9,6 +9,7 @@ from .. import login_manager, db
 from .pointcalc import PointCalc
 from .typecalc import TypeCalc
 import datetime
+import pygal
 
 
 @main.app_errorhandler(404)
@@ -118,6 +119,25 @@ def warnings():
     students = Student.query.order_by(Student.lname).all()
     return render_template("warnings.html", warns=warns, students=students)
 
+
+@main.route('/analytics')
+def analytics():
+    if not current_user.is_authenticated:
+        return redirect(url_for('.login'))
+    results = db.session.query(Point.type).add_column(Point.amount).all()
+    d = {}
+    for result in results:
+        if result.type in d:
+            amount = d[result.type] + result.amount
+            d[result.type] = amount
+        else:
+            d[result.type] = result.amount
+    pyChart = pygal.Pie()
+    for key, value in d.items():
+        pyChart.add(key, value)
+    pyChart.title = "Points Issued by Type (in %)"
+    chart = pyChart.render_data_uri()
+    return render_template("analytics.html", chart=chart)
 
 @login_manager.user_loader
 def load_user(user_id):

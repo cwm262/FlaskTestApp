@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}Student Center Point Tracker - Analytics{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <embed type="image/svg+xml" src={{ chart|safe }} />
+    </div>
+{% endblock %}
