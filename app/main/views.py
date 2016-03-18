@@ -139,6 +139,7 @@ def analytics():
     chart = pyChart.render_data_uri()
     return render_template("analytics.html", chart=chart)
 
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)

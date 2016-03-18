@@ -1,6 +1,6 @@
 from flask.ext.wtf import Form
 from wtforms.fields import PasswordField, StringField, SubmitField, BooleanField, SelectField
-from wtforms.validators import DataRequired, optional, Length
+from wtforms.validators import InputRequired, DataRequired, optional, Length, EqualTo
 
 
 class LoginForm(Form):
@@ -23,12 +23,19 @@ class PointsForm(Form):
     headPhone = BooleanField('Headphone Use [1 point]', validators=[optional()])
     callInWNotice = BooleanField('Called-In w/ Prior Notice [.5 point]', validators=[optional()])
     missedMeeting = BooleanField('Missed Employee Meeting [.5 point]', validators=[optional()])
-    other = SelectField('Other', choices=[('', ''), ('.25', '.25 points'), ('.5', '.5 points'), ('.75', '.75 points'), \
-                                          ('1', '1 point'), ('1.5', '1.5 points'), ('2', '2 points'), \
+    other = SelectField('Other', choices=[('', ''), ('.25', '.25 points'), ('.5', '.5 points'), ('.75', '.75 points'),
+                                          ('1', '1 point'), ('1.5', '1.5 points'), ('2', '2 points'),
                                           ('2.5', '2.5 points'), ('3', '3 points')], validators=[optional()])
     warning = BooleanField('<strong>Is this a warning? [No points will be given if you check this box!]</strong>')
-    whyField = StringField('Briefly (in < 140 characters) describe why you are giving points: ', \
+    whyField = StringField('Briefly (in < 140 characters) describe why you are giving points: ',
                            validators=[Length(min=3, max=140)])
     supervisorField = StringField("Are you giving points on behalf of a supervisor? If so, enter their pawprint: \
                                   (Otherwise, this will say your username)", validators=[Length(max=20), optional()])
     submit = SubmitField('Submit')
+
+
+class PasswordChangeForm(Form):
+    currentPassword = PasswordField('Current Password: ', validators=[DataRequired('You must enter your password.')])
+    newPassword = PasswordField('New Password: ', validators=[InputRequired(), EqualTo('confirm',
+                                                                                       message="Passwords must match")])
+    confirm = PasswordField('Repeat Password: ')
