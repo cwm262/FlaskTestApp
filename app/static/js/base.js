@@ -18,4 +18,19 @@ $(document).ready(function () {
 
     }(jQuery));
 
+    $(function(){
+        $('#viewPtsBtn').click(function(){
+            var paw = $("#profileWindow").attr("about");
+            $.ajax({
+                type: "GET",
+                url: "/api/students/"+paw,
+                contentType: "application/json",
+                dataType: "json",
+                success: function(result){
+                    console.log(result);
+                }
+            });
+        });
+    });
+
 });

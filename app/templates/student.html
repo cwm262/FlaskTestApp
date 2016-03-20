@@ -18,7 +18,14 @@
     {% endfor %}
   {% endif %}
 {% endwith %}
+<div class="container" id="ajaxTarget">
+</div>
 <div class="container">
+<button class="btn btn-default center-block" id="submitPtsBtn">Give Points/Warning</button>
+<button class="btn btn-default center-block" id="viewPtsBtn">View Points History</button>
+<button class="btn btn-default center-block" id="viewWarnBtn">View Warning History</button>
+</div>
+<div class="container" id="profileWindow" about="{{ student.pawprint }}">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3>{{ student.lname }}, {{ student.fname }}</h3>
@@ -32,7 +39,7 @@
         </div>
     </div>
 </div>
-<div class="container">
+{#<div class="container">
     <button class="btn btn-default center-block" data-toggle="collapse" data-target="#submitPtsForm">Toggle Submit Point Form</button>
     <div id="submitPtsForm" class="panel panel-default collapse">
         <div class="panel-heading">
@@ -117,5 +124,5 @@
             </tbody>
         </table>
     </div>
-</div>
+</div>#}
 {% endblock %}

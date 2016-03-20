@@ -1,5 +1,5 @@
 import bcrypt
-from flask import request, render_template, flash, session, redirect, url_for, abort
+from flask import request, render_template, flash, session, redirect, url_for, abort, jsonify
 from flask.ext.login import login_required, login_user, current_user, logout_user
 from flask.ext.bcrypt import Bcrypt
 from ..models import User, Student, Point, Warn
