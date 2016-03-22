@@ -9,7 +9,8 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         mgr = APIManager(app, flask_sqlalchemy_db=db)
-        mgr.create_api(models.Point, methods=['GET', 'POST', 'DELETE'])
+        mgr.create_api(models.Point, include_columns=['amount', 'type', 'why', 'when', 'supervisor', 'student_id'],
+                       methods=['GET', 'DELETE'])
         mgr.create_api(models.Student, methods=['GET', 'POST', 'DELETE'])
         bcrypt = Bcrypt()
         username = "bob"

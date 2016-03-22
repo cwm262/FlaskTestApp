@@ -18,13 +18,12 @@
     {% endfor %}
   {% endif %}
 {% endwith %}
-<div class="container" id="ajaxTarget">
-</div>
 <div class="container">
 <button class="btn btn-default center-block" id="submitPtsBtn">Give Points/Warning</button>
 <button class="btn btn-default center-block" id="viewPtsBtn">View Points History</button>
 <button class="btn btn-default center-block" id="viewWarnBtn">View Warning History</button>
 </div>
+<button class="btn btn-default center-block" id="showProfileBtn" style="display:none">Show Profile</button>
 <div class="container" id="profileWindow" about="{{ student.pawprint }}">
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -39,7 +38,7 @@
         </div>
     </div>
 </div>
-{#<div class="container">
+<div class="container">
     <button class="btn btn-default center-block" data-toggle="collapse" data-target="#submitPtsForm">Toggle Submit Point Form</button>
     <div id="submitPtsForm" class="panel panel-default collapse">
         <div class="panel-heading">
@@ -53,43 +52,8 @@
         </div>
     </div>
 </div>
-<div class="container">
-    <button class="btn btn-default center-block" data-toggle="collapse" data-target="#ptHistory">Toggle Point History</button>
-    <div id="ptHistory" class="table-responsive panel panel-default collapse">
-        <div class="panel-heading">
-            <h3 class="panel-title">Point History, Ordered by Date</h3>
-        </div>
-        <div class="panel-body">
-            <div class="input-group"> <span class="input-group-addon">Filter</span>
-                <input id="filter" type="text" class="form-control" placeholder="Type here...">
-            </div>
-        </div>
-        <table class="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th>Date Assigned</th>
-                    <th>Type</th>
-                    <th>Why</th>
-                    <th>Amount</th>
-                    <th>Supervisor</th>
-                    <th>Manager</th>
-                </tr>
-            </thead>
-            <tbody class="searchable">
-                {% for point in points %}
-                <tr class='studentListRow active'>
-                    <td>{{ point.when }}</td>
-                    <td>{{ point.type }}</td>
-                    <td>{{ point.why }}</td>
-                    <td>{{ point.amount }}</td>
-                    <td>{{ point.supervisor }}</td>
-                    <td>{{ point.issuer_id }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
+<div id="ajaxTarget" class="table-responsive"></div>
+{#
 <div class="container">
     <button class="btn btn-default center-block" data-toggle="collapse" data-target="#warnHistory">Toggle Warning History</button>
     <div id="warnHistory" class="table-responsive panel panel-default collapse">
