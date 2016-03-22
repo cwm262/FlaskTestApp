@@ -119,3 +119,21 @@ thead{
 .input-group .form-control{
     border-color: #000;
 }
+
+.nav-tabs.nav-justified{
+    background-color: #fff;
+}
+
+.nav-tabs.nav-justified>li>a{
+    text-decoration: none;
+    text-transform: uppercase;
+    color: #000;
+}
+
+.nav>li>a:focus{
+    background-color: #F1B82D;
+}
+
+.nav>li>a:hover{
+    background-color: #DBD5CD;
+}

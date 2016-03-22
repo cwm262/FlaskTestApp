@@ -19,19 +19,41 @@ $(document).ready(function () {
     }(jQuery));*/
 
     $(function(){
-        $("#showProfileBtn").click(function(){
-            $("#ajaxTarget").hide();
-            $("#showProfileBtn").hide();
-            $("#viewPtsBtn").show();
-            $("#profileWindow").show();
-        });
-        $('#viewPtsBtn').click(function(){
-            $("#profileWindow").hide();
-            $("#viewPtsBtn").hide();
-            $("#showProfileBtn").show();
+
+        $("#viewSummaryBtn").click(function(){
+            event.preventDefault();
             $("#ajaxTarget").html("<img src='/static/images/load.gif'/>");
-            //event.preventDefault();
-            var paw = $("#profileWindow").attr("about");
+            var paw = $("#hiddenPaw").val();
+            var filters = [{"name": "pawprint", "op": "like", "val": paw}];
+            $.ajax({
+              url: '/api/students',
+              data: {"q": JSON.stringify({"filters": filters})},
+              dataType: "json",
+              contentType: "application/json"
+            })
+                .done( function(response){
+                    var resp = response;
+                    var student = resp.objects[0];
+                    var profileWin = "<div class='panel panel-default'>\
+                                        <div class='panel-heading'>\
+                                            <h3>" + student.lname + ", " +  student.fname + "</h3>\
+                                        </div>\
+                                        <div class='panel-body'>\
+                                            Pawprint:" +  student.pawprint + "<hr>\
+                                            <a href='mailto:" + student.pawprint + "@mail.missouri.edu'>" + student.pawprint + "@mail.missouri.edu</a><hr>\
+                                            In tracker since: " + student.when_added + "<br>\
+                                            Point Total: " + student.pointTotal + "\
+                                        </div>\
+                                    </div>";
+                    $("#ajaxTarget").html(profileWin);
+                })
+        });
+
+        $('#viewPtsBtn').click(function(){
+            event.preventDefault();
+            $("#ajaxTarget").html("<img src='/static/images/load.gif'/>");
+            var paw = $("#hiddenPaw").val();
+            //var paw = $("#profileWindow").attr("about");
             var filters = [{"name": "student_id", "op": "like", "val": paw}];
             $.ajax({
               url: '/api/points',
