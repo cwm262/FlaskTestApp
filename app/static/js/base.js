@@ -20,6 +20,13 @@ $(document).ready(function () {
 
     $(function(){
 
+        $("#submitPtsBtn").click(function(){
+            event.preventDefault();
+            $("#ajaxTarget").html("<img src='/static/images/load.gif'/>");
+            var form = $("#submitPtsHidden").html();
+            $("#ajaxTarget").html(form);
+        });
+
         $("#viewSummaryBtn").click(function(){
             event.preventDefault();
             $("#ajaxTarget").html("<img src='/static/images/load.gif'/>");
@@ -51,7 +58,7 @@ $(document).ready(function () {
 
         $('#viewPtsBtn').click(function(){
             event.preventDefault();
-            $("#ajaxTarget").html("<img src='/static/images/load.gif'/>");
+            $("#ajaxTarget").html("<img src='/static/images/load.gif' style='center-block'/>");
             var paw = $("#hiddenPaw").val();
             //var paw = $("#profileWindow").attr("about");
             var filters = [{"name": "student_id", "op": "like", "val": paw}];
@@ -64,25 +71,26 @@ $(document).ready(function () {
                 .done( function(response){
                     var resp = response;
                     var points = resp.objects;
-                    var ptsTable = "<div class='panel-heading'>\
-                                                <h3 class='panel-title'>Point History, Ordered by Date</h3>\
+                    var ptsTable = "<div class='panel panel-default'>\
+                                        <div class='panel-heading'>\
+                                            <h3 class='panel-title'>Point History, Ordered by Date</h3>\
+                                        </div>\
+                                        <div class='panel-body'>\
+                                            <div class='input-group'> <span class='input-group-addon'>Filter</span>\
+                                                <input id='filter' type='text' class='form-control' placeholder='Type here...'>\
                                             </div>\
-                                            <div class='panel-body'>\
-                                                <div class='input-group'> <span class='input-group-addon'>Filter</span>\
-                                                    <input id='filter' type='text' class='form-control' placeholder='Type here...'>\
-                                                </div>\
-                                            </div>\
-                                            <table class='table table-bordered table-hover'>\
-                                                <thead>\
-                                                    <tr>\
-                                                        <th>Date Assigned</th>\
-                                                        <th>Type</th>\
-                                                        <th>Why</th>\
-                                                        <th>Amount</th>\
-                                                        <th>Supervisor</th>\
-                                                    </tr>\
-                                                </thead>\
-                                                <tbody class='searchable'>";
+                                        </div>\
+                                        <table class='table table-bordered'>\
+                                            <thead>\
+                                                <tr>\
+                                                    <th>Date Assigned</th>\
+                                                    <th>Type</th>\
+                                                    <th>Why</th>\
+                                                    <th>Amount</th>\
+                                                    <th>Supervisor</th>\
+                                                </tr>\
+                                            </thead>\
+                                            <tbody class='searchable'>";
                     $.each(points, function(i, val){
                         ptsTable += "<tr class='studentListRow active'>\
                             <td>" + val.when + "</td>\
@@ -93,7 +101,8 @@ $(document).ready(function () {
                             </tr>";
                     });
                     ptsTable += "</tbody>\
-                        </table>";
+                        </table>\
+                        </div>";
                     $("#ajaxTarget").html(ptsTable);
                     $('#filter').keyup(function () {
                         var rex = new RegExp($(this).val(), 'i');

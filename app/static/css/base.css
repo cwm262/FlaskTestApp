@@ -22,8 +22,7 @@ body{
 }
 
 .navbar-default .navbar-nav li a:hover{
-    color: #be8500;
-    text-shadow: .25px  .25px  .25px   black;
+    text-shadow: 1px 1px 1px #F1B82D;
 }
 
 .navbar-default .navbar-toggle .icon-bar{
@@ -122,12 +121,19 @@ thead{
 
 .nav-tabs.nav-justified{
     background-color: #fff;
+    border: 1px solid black;
+    box-shadow: 0 10px 6px -6px #000;
+}
+
+.nav-tabs>li>a{
+    border: 0px;
 }
 
 .nav-tabs.nav-justified>li>a{
     text-decoration: none;
     text-transform: uppercase;
     color: #000;
+    border-bottom: 1px solid black;
 }
 
 .nav>li>a:focus{
@@ -136,4 +142,25 @@ thead{
 
 .nav>li>a:hover{
     background-color: #DBD5CD;
+}
+
+.table-bordered>tbody>tr>td, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>td, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>thead>tr>th{
+    border: 1px solid black;
+}
+
+.table>thead:first-child>tr:first-child>th{
+    border-top: 1px solid black;
+}
+
+#ajaxTarget{
+    margin-top: 10px;
+}
+
+.alert-success{
+    background-color: #F1B82D;
+    color: black;
+    border-color: black;
+    text-align: center;
+    padding: 5px;
+    margin-bottom: 0;
 }
