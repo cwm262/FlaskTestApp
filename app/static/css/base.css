@@ -164,3 +164,12 @@ thead{
     padding: 5px;
     margin-bottom: 0;
 }
+
+#punishBtnContainer{
+    margin-bottom: 20px;
+}
+
+#defaultStudentPageMessage{
+    color: #F1B82D;
+    text-align: center;
+}

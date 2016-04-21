@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Give Points or Warning - {{ student.lname }}, {{ student.fname }}{% endblock %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+        {% if category == 'message' %}
+          <div class="alert alert-warning" role="alert">
+        {% else %}
+          <div class="alert alert-{{ category }}" role="alert">
+        {% endif %}
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+          {{ message }}
+        </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="container">
+    <div id="submitPtsForm" class="panel panel-default">
+        <div class="panel-heading">
+            Give Points or Warning
+        </div>
+        <div class="panel-body">
+            {% if error %}
+            <p class="text-danger">{{ error }}</p>
+            {% endif %}
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

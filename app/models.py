@@ -52,11 +52,11 @@ class Point(db.Model):
     issuer = db.relationship(User, uselist=False)
     student_id = db.Column(db.String, db.ForeignKey('students.pawprint'))
 
-    def __init__(self, amount, type, why, supervisor, issuer_id, student_id):
+    def __init__(self, amount, type, why, when, supervisor, issuer_id, student_id):
         self.amount = amount
         self.type = type
         self.why = why
-        self.when = datetime.datetime.today()
+        self.when = when
         if supervisor == '':
             self.supervisor = issuer_id
         else:
@@ -76,10 +76,10 @@ class Warn(db.Model):
     issuer = db.relationship(User, uselist=False)
     student_id = db.Column(db.String, db.ForeignKey('students.pawprint'))
 
-    def __init__(self, type, why, supervisor, issuer_id, student_id):
+    def __init__(self, type, why, when, supervisor, issuer_id, student_id):
         self.type = type
         self.why = why
-        self.when = datetime.datetime.today()
+        self.when = when
         if supervisor == '':
             self.supervisor = issuer_id
         else:

@@ -1,5 +1,6 @@
 from flask.ext.wtf import Form
 from wtforms.fields import PasswordField, StringField, SubmitField, BooleanField, SelectField
+from wtforms.fields.html5 import DateField
 from wtforms.validators import InputRequired, DataRequired, optional, Length, EqualTo
 
 
@@ -26,6 +27,7 @@ class PointsForm(Form):
     other = SelectField('Other', choices=[('', ''), ('.25', '.25 points'), ('.5', '.5 points'), ('.75', '.75 points'),
                                           ('1', '1 point'), ('1.5', '1.5 points'), ('2', '2 points'),
                                           ('2.5', '2.5 points'), ('3', '3 points')], validators=[optional()])
+    whenField = DateField('When did this occur?', format='%Y-%m-%d', validators=[DataRequired()])
     warning = BooleanField('<strong>Is this a warning? [No points will be given if you check this box!]</strong>')
     whyField = StringField('Briefly (in < 140 characters) describe why you are giving points: ',
                            validators=[Length(min=3, max=140)])

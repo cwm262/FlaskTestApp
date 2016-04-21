@@ -9,10 +9,8 @@
 
 {% block scripts %}
 {{super()}}
+<script src="{{url_for('static', filename='js/moment.js')}}"></script>
 <script src="{{url_for('static', filename='js/base.js')}}"></script>
-<script type=text/javascript>
-  $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-</script>
 {% endblock %}
 
 {%  block title %}Student Center Point Tracker{% endblock %}

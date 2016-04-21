@@ -79,6 +79,19 @@ def student(pawprint):
     student = Student.query.filter_by(pawprint=pawprint).first()
     if student is None:
         abort(404)
+    points = Point.query.filter_by(student_id=pawprint).order_by(Point.when.desc()).all()
+    warns = Warn.query.filter_by(student_id=pawprint).order_by(Warn.when.desc()).all()
+    now = datetime.datetime.today()
+    return render_template('student.html', student=student, time=now, points=points, warns=warns)
+
+
+@main.route('/students/<pawprint>/give-points', methods=['GET', 'POST'])
+def givepointspage(pawprint):
+    if not current_user.is_authenticated:
+        return redirect(url_for('.login'))
+    student = Student.query.filter_by(pawprint=pawprint).first()
+    if student is None:
+        abort(404)
     form = PointsForm()
     if form.validate_on_submit():
         try:
@@ -86,10 +99,8 @@ def student(pawprint):
             return redirect(url_for('.student', pawprint=pawprint))
         except Exception as e:
             abort(500)
-    points = Point.query.filter_by(student_id=pawprint).order_by(Point.when.desc()).all()
-    warns = Warn.query.filter_by(student_id=pawprint).order_by(Warn.when.desc()).all()
     now = datetime.datetime.today()
-    return render_template('student.html', student=student, time=now, points=points, warns=warns, form=form)
+    return render_template('doPunish.html', student=student, time=now, form=form)
 
 
 @main.route('/profile/<username>')
@@ -160,7 +171,8 @@ def give_points(form, pawprint, student):
     try:
         tc = TypeCalc(form)
         typeOf = tc.get_type()
-        newpts = Point(amount, typeOf, form.whyField.data, form.supervisorField.data, current_user.username, pawprint)
+        newpts = Point(amount, typeOf, form.whyField.data, form.whenField.data, form.supervisorField.data,
+                       current_user.username, pawprint)
         student.pointTotal += amount
         db.session.add(newpts)
         db.session.commit()
@@ -173,7 +185,8 @@ def give_warnings(form, pawprint):
     typeCalc = TypeCalc(form)
     warnType = typeCalc.get_type()
     try:
-        newWarning = Warn(warnType, form.whyField.data, form.supervisorField.data, current_user.username, pawprint)
+        newWarning = Warn(warnType, form.whyField.data, form.whenField.data,
+                          form.supervisorField.data, current_user.username, pawprint)
         db.session.add(newWarning)
         db.session.commit()
         flash("Warning issued.", 'success')

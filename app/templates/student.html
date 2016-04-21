@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
+{#{% import "bootstrap/wtf.html" as wtf %}#}
 
 {% block title %}Student Center Point Tracker - {{ student.lname }}, {{ student.fname }}{% endblock %}
 
@@ -26,7 +26,7 @@
     </table>
 </div>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
+{#{% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
     {% for category, message in messages %}
         {% if category == 'message' %}
@@ -39,20 +39,25 @@
         </div>
     {% endfor %}
   {% endif %}
-{% endwith %}
-
-<input type="hidden" name="paw" id="hiddenPaw" value="{{ student.pawprint }}"/>
+{% endwith %}#}
+<div id="punishBtnContainer" class="container">
+    <input type="hidden" name="paw" id="hiddenPaw" value="{{ student.pawprint }}"/>
+    <button type="button" class="btn btn-danger col-xs-4 col-xs-offset-4" onclick="window.location.href = '{{url_for(".givepointspage", pawprint=student.pawprint)}}'" id="submitPtsBtn">PUNISH</button>
+</div>
 
 <ul class="nav nav-tabs nav-justified">
   <li><a href="#" id="viewSummaryBtn">Summary</a></li>
   <li><a href="#" id="viewPtsBtn">Points History</a></li>
   <li><a href="#" id="viewWarnBtn">Warning History</a></li>
-  <li><a href="#" id="submitPtsBtn">Give Points/Warning</a></li>
 </ul>
-<div id="ajaxTarget" class="container table-responsive"></div>
+<div id="ajaxTarget" class="container table-responsive">
+    <div id="defaultStudentPageMessage">
+        <h1>Please select an above option (e.g., Points History) to view information for this student here.</h1>
+    </div>
+</div>
 
-<div class="container" id="submitPtsHidden" style="display:none">
-    {#<button class="btn btn-default center-block" data-toggle="collapse" data-target="#submitPtsForm">Toggle Submit Point Form</button>#}
+{#<div class="container" id="submitPtsHidden" style="display:none">
+    #}{#<button class="btn btn-default center-block" data-toggle="collapse" data-target="#submitPtsForm">Toggle Submit Point Form</button>#}{#
     <div id="submitPtsForm" class="panel panel-default">
         <div class="panel-heading">
             Submit Points
@@ -64,7 +69,7 @@
             {{ wtf.quick_form(form) }}
         </div>
     </div>
-</div>
+</div>#}
 {#
 <div class="container">
     <button class="btn btn-default center-block" data-toggle="collapse" data-target="#warnHistory">Toggle Warning History</button>
