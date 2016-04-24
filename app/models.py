@@ -44,7 +44,7 @@ class Point(db.Model):
     __tablename__ = 'points'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     amount = db.Column(db.Float, nullable=False, default=0)
-    type = db.Column(db.String(30), nullable=False)
+    type = db.Column(db.Integer, db.ForeignKey('infractionTypes.id'))
     why = db.Column(db.String(140))
     when = db.Column(db.DateTime)
     supervisor = db.Column(db.String(20))
@@ -68,7 +68,7 @@ class Point(db.Model):
 class Warn(db.Model):
     __tablename__ = 'warns'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    type = db.Column(db.String(30), nullable=False)
+    type = db.Column(db.Integer, db.ForeignKey('infractionTypes.id'))
     why = db.Column(db.String(140))
     when = db.Column(db.DateTime)
     supervisor = db.Column(db.String(20))
@@ -86,3 +86,14 @@ class Warn(db.Model):
             self.supervisor = supervisor
         self.issuer_id = issuer_id
         self.student_id = student_id
+
+
+class InfractionType(db.Model):
+    __tablename__ = 'infractionTypes'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    description = db.Column(db.String(50), nullable=False)
+    value = db.Column(db.Float, default=0)
+
+    def __init__(self, description, value):
+        self.description = description
+        self.value = value

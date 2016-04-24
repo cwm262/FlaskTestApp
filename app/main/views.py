@@ -2,12 +2,10 @@ import bcrypt
 from flask import request, render_template, flash, session, redirect, url_for, abort, jsonify
 from flask.ext.login import login_required, login_user, current_user, logout_user
 from flask.ext.bcrypt import Bcrypt
-from ..models import User, Student, Point, Warn
+from ..models import User, Student, Point, Warn, InfractionType
 from .forms import LoginForm, PointsForm
 from . import main
 from .. import login_manager, db
-from .pointcalc import PointCalc
-from .typecalc import TypeCalc
 import datetime
 import pygal
 
@@ -93,6 +91,12 @@ def givepointspage(pawprint):
     if student is None:
         abort(404)
     form = PointsForm()
+    infractiontypes = InfractionType.query.all()
+    infraction_names = []
+    for infraction in infractiontypes:
+        infraction_names.append(infraction.description)
+    infraction_choices = list(enumerate(infraction_names, 1))
+    form.pointsField.choices = infraction_choices
     if form.validate_on_submit():
         try:
             do_punish(form, pawprint, student)
@@ -157,23 +161,29 @@ def load_user(user_id):
 
 
 def do_punish(form, pawprint, student):
-    try:
-        give_points(form, pawprint, student)
-    except Exception as e:
-        give_warnings(form, pawprint)
+    if form.warning.data is True:
+        try:
+            give_warnings(form, pawprint)
+        except Exception as e:
+            raise e
+    else:
+        try:
+            give_points(form, pawprint, student)
+        except Exception as e:
+            raise e
 
 
 def give_points(form, pawprint, student):
-    pointcalc = PointCalc(form)
-    amount = pointcalc.calc_amount()
-    if amount == 0:
-        raise Exception('Is warning instead')
     try:
-        tc = TypeCalc(form)
-        typeOf = tc.get_type()
+        infraction = InfractionType.query.get(form.pointsField.data)
+        typeOf = infraction.description
+        if form.customAmountField.data != '':
+            amount = form.customAmountField.data
+        else:
+            amount = infraction.value
         newpts = Point(amount, typeOf, form.whyField.data, form.whenField.data, form.supervisorField.data,
                        current_user.username, pawprint)
-        student.pointTotal += amount
+        student.pointTotal += float(amount)
         db.session.add(newpts)
         db.session.commit()
         flash("Points issued.", 'success')
@@ -182,9 +192,9 @@ def give_points(form, pawprint, student):
 
 
 def give_warnings(form, pawprint):
-    typeCalc = TypeCalc(form)
-    warnType = typeCalc.get_type()
     try:
+        infraction = InfractionType.query.get(form.pointsField.data)
+        warnType = infraction.description
         newWarning = Warn(warnType, form.whyField.data, form.whenField.data,
                           form.supervisorField.data, current_user.username, pawprint)
         db.session.add(newWarning)

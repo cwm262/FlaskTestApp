@@ -162,7 +162,7 @@ thead{
     border-color: black;
     text-align: center;
     padding: 5px;
-    margin-bottom: 0;
+    margin-bottom: 10px;
 }
 
 #punishBtnContainer{
@@ -172,4 +172,8 @@ thead{
 #defaultStudentPageMessage{
     color: #F1B82D;
     text-align: center;
+}
+
+#submitPtsForm{
+    padding: 20px;
 }

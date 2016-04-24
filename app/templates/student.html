@@ -26,7 +26,7 @@
     </table>
 </div>
 
-{#{% with messages = get_flashed_messages(with_categories=true) %}
+{% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
     {% for category, message in messages %}
         {% if category == 'message' %}
@@ -39,7 +39,8 @@
         </div>
     {% endfor %}
   {% endif %}
-{% endwith %}#}
+{% endwith %}
+
 <div id="punishBtnContainer" class="container">
     <input type="hidden" name="paw" id="hiddenPaw" value="{{ student.pawprint }}"/>
     <button type="button" class="btn btn-danger col-xs-4 col-xs-offset-4" onclick="window.location.href = '{{url_for(".givepointspage", pawprint=student.pawprint)}}'" id="submitPtsBtn">PUNISH</button>

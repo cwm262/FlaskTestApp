@@ -11,22 +11,12 @@ class LoginForm(Form):
 
 
 class PointsForm(Form):
-    noCallNoShow = BooleanField('No Call, No Show [3 points]', validators=[optional()])
-    leaveEarly = BooleanField('Left Early w/o Permission [2 points]', validators=[optional()])
-    callInNoNote = BooleanField('Called-In w/o Doc Note [2 points]', validators=[optional()])
-    drawerOff = BooleanField('Drawer Off by 1% or $5 [2 points]', validators=[optional()])
-    notDoing = BooleanField('Not Doing as Instructed [1.5 points]', validators=[optional()])
-    lateNoCall = BooleanField('Late w/ No Call [1 point]', validators=[optional()])
-    eatBehind = BooleanField('Eating Behind Counter [1 point]', validators=[optional()])
-    extendedBreak = BooleanField('Taking Extended Breaks [1 point]', validators=[optional()])
-    outOfUniform = BooleanField('Out of Uniform [1 point', validators=[optional()])
-    cellPhone = BooleanField('Cell Phone Use [1 point]', validators=[optional()])
-    headPhone = BooleanField('Headphone Use [1 point]', validators=[optional()])
-    callInWNotice = BooleanField('Called-In w/ Prior Notice [.5 point]', validators=[optional()])
-    missedMeeting = BooleanField('Missed Employee Meeting [.5 point]', validators=[optional()])
-    other = SelectField('Other', choices=[('', ''), ('.25', '.25 points'), ('.5', '.5 points'), ('.75', '.75 points'),
-                                          ('1', '1 point'), ('1.5', '1.5 points'), ('2', '2 points'),
-                                          ('2.5', '2.5 points'), ('3', '3 points')], validators=[optional()])
+    pointsField = SelectField('Misbehavior', validators=[DataRequired()], coerce=int)
+    customAmountField = SelectField('Customize the amount of points: If you leave this blank, the default amount will\
+                                    be given', choices=[('', ''), ('.25', '.25 points'), ('.5', '.5 points'),
+                                                        ('.75', '.75 points'), ('1', '1 point'),
+                                                        ('1.5', '1.5 points'), ('2', '2 points'), ('2.5', '2.5 points'),
+                                                        ('3', '3 points')], validators=[optional()])
     whenField = DateField('When did this occur?', format='%Y-%m-%d', validators=[DataRequired()])
     warning = BooleanField('<strong>Is this a warning? [No points will be given if you check this box!]</strong>')
     whyField = StringField('Briefly (in < 140 characters) describe why you are giving points: ',
