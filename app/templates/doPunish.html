@@ -7,17 +7,6 @@
 
 <div class="container">
     {{ wtf.quick_form(form, extra_classes="panel panel-default", form_type="horizontal", id="submitPtsForm") }}
-    {#<div id="submitPtsForm" class="panel panel-default">
-        <div class="panel-heading">
-            Give Points or Warning
-        </div>
-        <div class="panel-body">
-            {% if error %}
-            <p class="text-danger">{{ error }}</p>
-            {% endif %}
-            {{ wtf.quick_form(form) }}
-        </div>
-    </div>#}
 </div>
 
 {% endblock %}

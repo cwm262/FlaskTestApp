@@ -3,7 +3,7 @@ from flask import request, render_template, flash, session, redirect, url_for, a
 from flask.ext.login import login_required, login_user, current_user, logout_user
 from flask.ext.bcrypt import Bcrypt
 from ..models import User, Student, Point, Warn, InfractionType
-from .forms import LoginForm, PointsForm
+from .forms import LoginForm, PointsForm, PasswordChangeForm, AddStudentForm
 from . import main
 from .. import login_manager, db
 import datetime
@@ -115,6 +115,51 @@ def profile(username):
         return redirect(url_for('.index'))
     user = User.query.get(username)
     return render_template('profile.html', user=user)
+
+
+@main.route('/profile/<username>/password-change', methods=['GET', 'POST'])
+def change_password(username):
+    if not current_user.is_authenticated:
+        return redirect(url_for('.login'))
+    if username != current_user.username:
+        return redirect(url_for('.index'))
+    user = User.query.get(username)
+    form = PasswordChangeForm()
+    if form.validate_on_submit():
+        try:
+            bcrypt = Bcrypt()
+            if bcrypt.check_password_hash(user.password, form.currentPassword.data):
+                newPassword = bcrypt.generate_password_hash(form.confirm.data)
+                user.password = newPassword
+                db.session.commit()
+            return redirect(url_for('.logout'))
+        except Exception as e:
+            abort(500)
+    flash("You will be asked to login again if your password change is successful", 'danger')
+    return render_template('passChange.html', user=user, form=form)
+
+
+@main.route('/profile/<username>/add-student', methods=['GET', 'POST'])
+def add_student(username):
+    if not current_user.is_authenticated:
+        return redirect(url_for('.login'))
+    if username != current_user.username:
+        return redirect(url_for('.index'))
+    form = AddStudentForm()
+    if form.validate_on_submit():
+        try:
+            pawprint = form.pawprintField.data
+            if not Student.query.get(pawprint):
+                first_name = form.firstNameField.data
+                last_name = form.lastNameField.data
+                newStudent = Student(pawprint, first_name, last_name)
+                db.session.add(newStudent)
+                db.session.commit()
+                flash("Student added successfully.", 'success')
+            return redirect(url_for(".profile", username=current_user.username))
+        except Exception as e:
+            abort(500)
+    return render_template('addStudent.html', form=form)
 
 
 @main.route('/points')

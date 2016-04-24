@@ -28,6 +28,14 @@ class PointsForm(Form):
 
 class PasswordChangeForm(Form):
     currentPassword = PasswordField('Current Password: ', validators=[DataRequired('You must enter your password.')])
-    newPassword = PasswordField('New Password: ', validators=[InputRequired(), EqualTo('confirm',
-                                                                                       message="Passwords must match")])
+    newPassword = PasswordField('New Password: ', validators=[InputRequired(), Length(min=8, max=40),
+                                                              EqualTo('confirm', message="Passwords must match")])
     confirm = PasswordField('Repeat Password: ')
+    submit = SubmitField('Submit')
+
+
+class AddStudentForm(Form):
+    pawprintField = StringField('Student Pawprint: ', validators=[DataRequired('Please enter their pawprint.')])
+    firstNameField = StringField('Student First Name: ', validators=[DataRequired('Please enter their first name.')])
+    lastNameField = StringField('Student Last Name: ', validators=[DataRequired('Please enter their last name.')])
+    submit = SubmitField('Submit')

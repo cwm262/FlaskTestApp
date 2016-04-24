@@ -20,12 +20,27 @@ $(document).ready(function () {
 
     $(function(){
 
-        /*$("#submitPtsBtn").click(function(){
-            event.preventDefault();
-            $("#ajaxTarget").html("<img src='/static/images/load.gif'/>");
-            var form = $("#submitPtsHidden").html();
-            $("#ajaxTarget").html(form);
-        });*/
+        $('#addStudentForm').on('submit', function(e){
+            e.preventDefault();
+            confirmDialog();
+        });
+
+        function confirmDialog() {
+            $("#dialog-confirm").dialog({
+                resizable: false,
+                height: 140,
+                modal: true,
+                buttons: {
+                    "Submit": function () {
+                        $(this).dialog("close");
+                        $('#addStudentForm').submit();
+                    },
+                    'Cancel': function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        }
 
         $("#viewSummaryBtn").click(function(){
             event.preventDefault();

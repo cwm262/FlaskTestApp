@@ -177,3 +177,26 @@ thead{
 #submitPtsForm{
     padding: 20px;
 }
+
+#profile-greeting{
+    color: #F1B82D;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#changePassForm{
+    padding: 20px;
+}
+
+.nav-pills{
+    background-color: #fff;
+    border: 1px solid black;
+    box-shadow: 0 10px 6px -6px #000;
+}
+
+.nav-pills>li>a{
+    text-decoration: none;
+    text-transform: uppercase;
+    color: #000;
+    text-align: center;
+}

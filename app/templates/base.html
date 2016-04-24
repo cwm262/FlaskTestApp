@@ -9,6 +9,7 @@
 
 {% block scripts %}
 {{super()}}
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <script src="{{url_for('static', filename='js/moment.js')}}"></script>
 <script src="{{url_for('static', filename='js/base.js')}}"></script>
 {% endblock %}
