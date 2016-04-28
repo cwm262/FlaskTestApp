@@ -30,8 +30,8 @@ class Student(db.Model):
     pointTotal = db.Column(db.Float, default=0)
     currentEmployee = db.Column(db.Boolean, default=True)
     when_added = db.Column(db.DateTime)
-    points = db.relationship('Point', backref='students', lazy='dynamic')
-    warnings = db.relationship('Warn', backref='students', lazy='dynamic')
+    points = db.relationship('Point', cascade="all, delete", backref='students', lazy='dynamic')
+    warnings = db.relationship('Warn', cascade="all, delete", backref='students', lazy='dynamic')
 
     def __init__(self, pawprint, fname, lname):
         self.pawprint = pawprint
@@ -61,6 +61,27 @@ class Point(db.Model):
             self.supervisor = issuer_id
         else:
             self.supervisor = supervisor
+        self.issuer_id = issuer_id
+        self.student_id = student_id
+
+
+class OldPoint(db.Model):
+    __tablename__ = 'old_points'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    amount = db.Column(db.Float, nullable=False, default=0)
+    type = db.Column(db.Integer, db.ForeignKey('infractionTypes.id'))
+    why = db.Column(db.String(140))
+    when = db.Column(db.Date)
+    supervisor = db.Column(db.String(20))
+    issuer_id = db.Column(db.String)
+    student_id = db.Column(db.String)
+
+    def __init__(self, amount, type, why, when, supervisor, issuer_id, student_id):
+        self.amount = amount
+        self.type = type
+        self.why = why
+        self.when = when
+        self.supervisor = supervisor
         self.issuer_id = issuer_id
         self.student_id = student_id
 

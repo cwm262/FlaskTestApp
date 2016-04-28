@@ -1,15 +1,12 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}Student Center Point Tracker - User Profile{% endblock %}
+{% block title %}Student Center Point Tracker - Remove Student{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 id="profile-greeting">Please select an option below</h1>
-    <ul class="nav nav-pills nav-stacked">
-        <li><a href='{{url_for(".change_password", username=current_user.username)}}'>Change Password</a></li>
-        <li><a href='{{url_for(".add_student", username=current_user.username)}}'>Add New Student</a></li>
-        <li><a href='{{url_for(".remove_student", username=current_user.username)}}'>Remove Student</a></li>
-    </ul>
+
+<div id="addStudentContainer" class="container">
+    {{ wtf.quick_form(form, extra_classes="panel panel-default", form_type="horizontal", id="removeStudentForm") }}
 </div>
 
 {% with messages = get_flashed_messages(with_categories=true) %}

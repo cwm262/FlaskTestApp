@@ -28,7 +28,7 @@
             </thead>
             <tbody class="searchable">
                 {% for point in points %}
-                <tr class='studentListRow active' onclick="window.location.href = '{{url_for(".student", pawprint=point.student_id)}}';">
+                <tr class='studentListRow active'>
                     <td>{{ point.when }}</td>
                     <td>{{ point.type }}</td>
                     <td>{{ point.why }}</td>

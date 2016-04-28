@@ -39,3 +39,8 @@ class AddStudentForm(Form):
     firstNameField = StringField('Student First Name: ', validators=[DataRequired('Please enter their first name.')])
     lastNameField = StringField('Student Last Name: ', validators=[DataRequired('Please enter their last name.')])
     submit = SubmitField('Submit')
+
+
+class RemoveStudentForm(Form):
+    pawprintField = StringField('Student Pawprint: ', validators=[DataRequired('Please enter their pawprint.')])
+    submit = SubmitField('Submit')

@@ -1,14 +1,12 @@
-import bcrypt
 import collections
 from flask import request, render_template, flash, session, redirect, url_for, abort, json
 from flask.ext.login import login_required, login_user, current_user, logout_user
 from flask.ext.bcrypt import Bcrypt
-from ..models import User, Student, Point, Warn, InfractionType
-from .forms import LoginForm, PointsForm, PasswordChangeForm, AddStudentForm
+from ..models import User, Student, Point, Warn, InfractionType, OldPoint
+from .forms import LoginForm, PointsForm, PasswordChangeForm, AddStudentForm, RemoveStudentForm
 from . import main
 from .. import login_manager, db
 import datetime
-import pygal
 
 
 @main.app_errorhandler(404)
@@ -78,10 +76,8 @@ def student(pawprint):
     student = Student.query.filter_by(pawprint=pawprint).first()
     if student is None:
         abort(404)
-    points = Point.query.filter_by(student_id=pawprint).order_by(Point.when.desc()).all()
-    warns = Warn.query.filter_by(student_id=pawprint).order_by(Warn.when.desc()).all()
     now = datetime.datetime.today()
-    return render_template('student.html', student=student, time=now, points=points, warns=warns)
+    return render_template('student.html', student=student, time=now)
 
 
 @main.route('/students/<pawprint>/give-points', methods=['GET', 'POST'])
@@ -161,6 +157,32 @@ def add_student(username):
         except Exception as e:
             abort(500)
     return render_template('addStudent.html', form=form)
+
+
+@main.route('/profile/<username>/remove-student', methods=['GET', 'POST'])
+def remove_student(username):
+    if not current_user.is_authenticated:
+        return redirect(url_for('.login'))
+    if username != current_user.username:
+        return redirect(url_for('.index'))
+    form = RemoveStudentForm()
+    if form.validate_on_submit():
+        try:
+            pawprint = form.pawprintField.data
+            toDelete = Student.query.get(pawprint)
+            if toDelete:
+                points = Point.query.filter_by(student_id=pawprint).all()
+                for point in points:
+                    oldPoint = OldPoint(point.amount, point.type, point.why, point.when, point.supervisor,
+                                        point.issuer_id, point.student_id)
+                    db.session.add(oldPoint)
+                db.session.delete(toDelete)
+                db.session.commit()
+                flash("Student removed successfully.", 'success')
+            return redirect(url_for(".profile", username=current_user.username))
+        except Exception as e:
+            abort(500)
+    return render_template('removeStudent.html', form=form)
 
 
 @main.route('/points')
