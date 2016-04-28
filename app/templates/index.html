@@ -1,41 +1,45 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div>
-      {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
-                {% if category == 'message' %}
-                  <div class="alert alert-warning" role="alert">
-                {% else %}
-                  <div class="alert alert-{{ category }}" role="alert">
-                {% endif %}
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                  {{ message }}
-                </div>
-            {% endfor %}
-          {% endif %}
-      {% endwith %}
+    <div class="alert-messages">
+        <div>
+          {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                    {% if category == 'message' %}
+                      <div class="alert alert-warning" role="alert">
+                    {% else %}
+                      <div class="alert alert-{{ category }}" role="alert">
+                    {% endif %}
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                      {{ message }}
+                    </div>
+                {% endfor %}
+              {% endif %}
+          {% endwith %}
+        </div>
     </div>
-    <div class="container mainBody">
-        <h1>Hello, {{ current_user.username }}!</h1>
-        <p>
-            Welcome back to the MU CDS Student Center Point Tracker.
-        </p>
-        <p>
-            <small>This application was created to help you maintain disciprine</small>
-        </p>
-        <p>
-            <small>
-                Click on an option above to navigate through the application.<br>
-                >Students< will show you a complete list of all students currently in the tracker.<br>
-                >Points History< will show you a complete list of all points ever tracked.<br>
-                >Warning History< will show you a complete list of all warnings ever tracked.<br>
-                The link named after your username is your profile page.<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Here you can see all points/warnings ever assigned by you.<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; You may also change your password there.<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Or, add and remove students from the tracker.
-            </small>
-        </p>
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Hello, {{ current_user.username }}!</h3>
+            </div>
+            <div class="panel-body">
+                <ul>
+                    <li>Welcome back to the MU CDS Student Center Point Tracker.</li>
+                    <li>This application was created to help you maintain disciprine</li>
+                    <li>Click on an option above to navigate through the application</li>
+                    <li><strong>Students</strong> will show you a complete list of all students currently in the tracker.</li>
+                    <li><strong>Points History</strong> will show you a complete list of all points ever tracked.</li>
+                    <li><strong>Warning History</strong> will show you a complete list of all warnings ever tracked.</li>
+                    <li>The link named after your username is your profile page.</li>
+                        <ul>
+                            <li>There you can see all points/warnings ever assigned by you.</li>
+                            <li>You may also change your password.</li>
+                            <li>Or, add and remove students from the tracker.</li>
+                        </ul>
+                </ul>
+            </div>
+        </div>
     </div>
 {% endblock %}

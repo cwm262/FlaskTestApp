@@ -179,6 +179,8 @@ def remove_student(username):
                 db.session.delete(toDelete)
                 db.session.commit()
                 flash("Student removed successfully.", 'success')
+            else:
+                flash("Could not find student. Please verify that pawprint is correct.", "warning")
             return redirect(url_for(".profile", username=current_user.username))
         except Exception as e:
             abort(500)

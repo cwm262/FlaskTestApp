@@ -152,14 +152,22 @@ thead{
     margin-top: 10px;
 }
 
-.alert-success{
-    background-color: #F1B82D;
-    color: black;
-    border-color: black;
-    text-align: center;
-    padding: 5px;
-    margin-bottom: 10px;
+.alert-messages {
+  position: fixed;
+  top: 80px;
+  left: 0;
+  right: 0;
+  z-index: 7000;
 }
+
+/*.alert-success{*/
+    /*background-color: #F1B82D;*/
+    /*color: black;*/
+    /*border-color: black;*/
+    /*text-align: center;*/
+    /*padding: 5px;*/
+    /*margin-bottom: 10px;*/
+/*}*/
 
 #punishBtnContainer{
     margin-bottom: 20px;
@@ -184,6 +192,14 @@ thead{
     padding: 20px;
 }
 
+#addStudentForm{
+    padding: 20px;
+}
+
+#removeStudentForm{
+    padding: 20px;
+}
+
 .nav-pills{
     background-color: #fff;
     border: 1px solid black;
@@ -195,6 +211,31 @@ thead{
     text-transform: uppercase;
     color: #000;
     text-align: center;
+}
+
+a{
+    color: #000;
+}
+
+a:hover{
+    color: #000;
+}
+
+.load-img{
+    width: 50%;
+    margin: 0 auto;
+}
+
+#loader{
+    position: fixed;
+    top: 200px;
+    left: 0;
+    right: 0;
+    z-index: 7000;
+}
+
+a:focus{
+    color: #000;
 }
 
 /* Effect 1: Brackets */

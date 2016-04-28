@@ -16,11 +16,19 @@
 
 }(jQuery));
 
+$(document).ajaxStart(function(){
+    $("#loader").show();
+});
+
+$(document).ajaxStop(function(){
+    $("#loader").hide();
+    $("#ajaxTarget").show();
+});
+
 $(document).ready(function () {
 
     $("#viewSummaryBtn").click(function(){
         event.preventDefault();
-        $("#ajaxTarget").html("<img src='/static/images/load.gif'/>");
         var paw = $("#hiddenPaw").val();
         var filters = [{"name": "pawprint", "op": "like", "val": paw}];
         $.ajax({
@@ -49,7 +57,6 @@ $(document).ready(function () {
 
     $('#viewWarnBtn').click(function(){
         event.preventDefault();
-        $("#ajaxTarget").html("<img src='/static/images/load.gif'/>");
         var paw = $("#hiddenPaw").val();
         var filters = [{"name": "student_id", "op": "like", "val": paw}];
         $.ajax({
@@ -105,7 +112,6 @@ $(document).ready(function () {
 
     $('#viewPtsBtn').click(function(){
         event.preventDefault();
-        $("#ajaxTarget").html("<img src='/static/images/load.gif'/>");
         var paw = $("#hiddenPaw").val();
         var filters = [{"name": "student_id", "op": "like", "val": paw}];
         $.ajax({

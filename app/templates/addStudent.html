@@ -8,20 +8,4 @@
 <div id="addStudentContainer" class="container">
     {{ wtf.quick_form(form, extra_classes="panel panel-default", form_type="horizontal", id="addStudentForm") }}
 </div>
-
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    {% for category, message in messages %}
-        {% if category == 'message' %}
-          <div class="alert alert-warning" role="alert">
-        {% else %}
-          <div class="alert alert-{{ category }}" role="alert">
-        {% endif %}
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-          {{ message }}
-        </div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
-
 {% endblock %}
