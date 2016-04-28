@@ -4,7 +4,7 @@
 
 $(document).ready(function () {
 
-    /*(function ($) {
+    (function ($) {
 
         $('#filter').keyup(function () {
 
@@ -16,7 +16,7 @@ $(document).ready(function () {
 
         })
 
-    }(jQuery));*/
+    }(jQuery));
 
     $(function(){
 

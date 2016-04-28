@@ -1,5 +1,6 @@
 import bcrypt
-from flask import request, render_template, flash, session, redirect, url_for, abort, jsonify
+import collections
+from flask import request, render_template, flash, session, redirect, url_for, abort, json
 from flask.ext.login import login_required, login_user, current_user, logout_user
 from flask.ext.bcrypt import Bcrypt
 from ..models import User, Student, Point, Warn, InfractionType
@@ -181,23 +182,32 @@ def warnings():
 
 
 @main.route('/analytics')
-def analytics():
+def analytics(chartID='chart_ID', chart_type='line', chart_height=500):
     if not current_user.is_authenticated:
         return redirect(url_for('.login'))
-    results = db.session.query(Point.type).add_column(Point.amount).all()
+    results = db.session.query(Point.when).add_column(Point.amount).all()
+    timeArray = []
+    amountArray = []
     d = {}
     for result in results:
-        if result.type in d:
-            amount = d[result.type] + result.amount
-            d[result.type] = amount
+        time = result.when
+        if time in d:
+            amount = d[time] + result.amount
+            d[time] = amount
         else:
-            d[result.type] = result.amount
-    pyChart = pygal.Pie()
-    for key, value in d.items():
-        pyChart.add(key, value)
-    pyChart.title = "Points Issued by Type (in %)"
-    chart = pyChart.render_data_uri()
-    return render_template("analytics.html", chart=chart)
+            d[time] = result.amount
+    od = collections.OrderedDict(sorted(d.items()))
+    for key, value in od.items():
+        t = json.dumps(key.isoformat())
+        timeArray.append(t)
+        amountArray.append(value)
+    chart = {"renderTo": chartID, "type": chart_type, "height": chart_height}
+    title = {"text": 'Points Assigned By Day'}
+    xAxis = {"categories": timeArray}
+    yAxis = {"title": {"text": 'Points'}, 'plotlines': [{'value': 0, 'width': 1, 'color': '#808080'}]}
+    series = [{"name": 'Amount', "data": amountArray}]
+    return render_template('analytics.html', chartID=chartID, chart=chart, series=series, title=title, xAxis=xAxis,
+                           yAxis=yAxis)
 
 
 @login_manager.user_loader

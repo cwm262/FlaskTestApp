@@ -22,7 +22,8 @@ body{
 }
 
 .navbar-default .navbar-nav li a:hover{
-    text-shadow: 1px 1px 1px #F1B82D;
+    box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.75);
+    background-color: #D7D7D7;
 }
 
 .navbar-default .navbar-toggle .icon-bar{
