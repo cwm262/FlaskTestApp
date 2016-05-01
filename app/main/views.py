@@ -4,7 +4,7 @@ from flask.ext.login import login_required, login_user, current_user, logout_use
 from flask.ext.bcrypt import Bcrypt
 from werkzeug.security import check_password_hash
 from ..models import User, Student, Point, Warn, InfractionType, OldPoint
-from .forms import LoginForm, PointsForm, PasswordChangeForm, AddStudentForm, RemoveStudentForm
+from .forms import LoginForm, PointsForm, PasswordChangeForm, AddStudentForm, RemoveStudentForm, SearchPointsForm
 from . import main
 from .. import login_manager, db
 from config import RESULTS_PER_PAGE
@@ -202,7 +202,12 @@ def points(page=1):
         return redirect(url_for('.login'))
     points = Point.query.order_by(Point.when.desc()).paginate(page, RESULTS_PER_PAGE, False)
     students = Student.query.order_by(Student.lname).all()
-    return render_template("points.html", points=points, students=students)
+    form = SearchPointsForm()
+    if form.validate_on_submit():
+        query = form.pointsSearchField.data
+        results = Point.query.filter(Point.why.ilike('%'+query+'%'))
+        return render_template("points.html", query=query, results=results, students=students, form=form)
+    return render_template("points.html", points=points, students=students, form=form)
 
 
 @main.route('/warnings')

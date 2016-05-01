@@ -11,8 +11,15 @@
             <h3 class="panel-title">Point History, Ordered by Date</h3>
         </div>
         <div class="panel-body">
-            {% if points.has_prev %}<a href="{{ url_for('.points', page=points.prev_num) }}">&lt;&lt; Newer points</a>{% else %}&lt;&lt; Newer points{% endif %} |
-            {% if points.has_next %}<a href="{{ url_for('.points', page=points.next_num) }}">Older points &gt;&gt;</a>{% else %}Older points &gt;&gt;{% endif %}
+            {% if points %}
+                {% if points.has_prev %}<a href="{{ url_for('.points', page=points.prev_num) }}">&lt;&lt; Newer points</a>{% else %}&lt;&lt; Newer points{% endif %} |
+                {% if points.has_next %}<a href="{{ url_for('.points', page=points.next_num) }}">Older points &gt;&gt;</a>{% else %}Older points &gt;&gt;{% endif %}
+            {% endif %}
+            {% if query %}
+                Showing results for: {{ query }} <br>
+                <a href="{{ url_for('.points') }}">Clear Search Results</a>
+            {% endif %}
+            {{ wtf.quick_form(form, extra_classes="panel-body", form_type="horizontal", id="searchPointsForm") }}
         </div>
         <table class="table table-bordered table-hover">
             <thead>
@@ -27,6 +34,19 @@
                 </tr>
             </thead>
             <tbody class="searchable">
+                {% if results %}
+                {% for result in results %}
+                    <tr class='studentListRow active'>
+                    <td>{{ result.when }}</td>
+                    <td>{{ result.type }}</td>
+                    <td>{{ result.why }}</td>
+                    <td>{{ result.student_id }}</td>
+                    <td>{{ result.amount }}</td>
+                    <td>{{ result.supervisor }}</td>
+                    <td>{{ result.issuer_id }}</td>
+                </tr>
+                {% endfor %}
+                {% else %}
                 {% for point in points.items %}
                 <tr class='studentListRow active'>
                     <td>{{ point.when }}</td>
@@ -38,6 +58,7 @@
                     <td>{{ point.issuer_id }}</td>
                 </tr>
                 {% endfor %}
+                {% endif %}
             </tbody>
         </table>
     </div>

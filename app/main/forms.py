@@ -44,3 +44,8 @@ class AddStudentForm(Form):
 class RemoveStudentForm(Form):
     pawprintField = StringField('Student Pawprint: ', validators=[DataRequired('Please enter their pawprint.')])
     submit = SubmitField('Submit')
+
+
+class SearchPointsForm(Form):
+    pointsSearchField = SearchField('Search: ', validators=[DataRequired()])
+    submit = SubmitField('Submit')
