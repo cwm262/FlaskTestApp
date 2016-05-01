@@ -1,11 +1,13 @@
 import collections
-from flask import request, render_template, flash, session, redirect, url_for, abort, json
+from flask import request, render_template, flash, session, redirect, url_for, abort, json, jsonify
 from flask.ext.login import login_required, login_user, current_user, logout_user
 from flask.ext.bcrypt import Bcrypt
+from werkzeug.security import check_password_hash
 from ..models import User, Student, Point, Warn, InfractionType, OldPoint
 from .forms import LoginForm, PointsForm, PasswordChangeForm, AddStudentForm, RemoveStudentForm
 from . import main
 from .. import login_manager, db
+from config import RESULTS_PER_PAGE
 import datetime
 
 
@@ -34,13 +36,14 @@ def login():
             if not approved:
                 error = "You have not been granted access yet."
                 return render_template("login.html", form=form, error=error)
-            bcrypt = Bcrypt()
-            if bcrypt.check_password_hash(user.password, form.password.data):
+            #bcrypt = Bcrypt()
+            pwhash = user.password
+            password = form.password.data
+            if check_password_hash(pwhash, password):
                 user.authenticated = True
                 db.session.add(user)
                 db.session.commit()
                 login_user(user, remember=True)
-                flash("You have successfully logged in.", 'success')
                 return redirect(url_for('.index'))
             else:
                 error = "Your password is incorrect. Please try again."
@@ -166,6 +169,11 @@ def remove_student(username):
     if username != current_user.username:
         return redirect(url_for('.index'))
     form = RemoveStudentForm()
+    pawprints = db.session.query(Student.pawprint).all()
+    p = []
+    for pawprint in pawprints:
+        p.append(pawprint.pawprint)
+    p = json.dumps(p)
     if form.validate_on_submit():
         try:
             pawprint = form.pawprintField.data
@@ -184,14 +192,15 @@ def remove_student(username):
             return redirect(url_for(".profile", username=current_user.username))
         except Exception as e:
             abort(500)
-    return render_template('removeStudent.html', form=form)
+    return render_template('removeStudent.html', form=form, student_pawprints=p)
 
 
-@main.route('/points')
-def points():
+@main.route('/points', methods=['GET', 'POST'])
+@main.route('/points/<int:page>', methods=['GET', 'POST'])
+def points(page=1):
     if not current_user.is_authenticated:
         return redirect(url_for('.login'))
-    points = Point.query.order_by(Point.when.desc()).all()
+    points = Point.query.order_by(Point.when.desc()).paginate(page, RESULTS_PER_PAGE, False)
     students = Student.query.order_by(Student.lname).all()
     return render_template("points.html", points=points, students=students)
 
@@ -260,8 +269,8 @@ def give_points(form, pawprint, student):
             amount = form.customAmountField.data
         else:
             amount = infraction.value
-        newpts = Point(amount, typeOf, form.whyField.data, form.whenField.data, form.supervisorField.data,
-                       current_user.username, pawprint)
+        newpts = Point(amount, typeOf, form.whyField.data, form.whenField.data,
+                       form.supervisorField.data, current_user.username, pawprint)
         student.pointTotal += float(amount)
         db.session.add(newpts)
         db.session.commit()

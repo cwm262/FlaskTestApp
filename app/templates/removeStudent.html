@@ -3,10 +3,21 @@
 
 {% block title %}Student Center Point Tracker - Remove Student{% endblock %}
 
+{% block scripts %}
+{{super()}}
+<script>
+    var pawprints ={{ student_pawprints|safe }}
+</script>
+<script src="{{url_for('static', filename='js/pawprintauto.js')}}"></script>
+{% endblock %}
+
 {% block content %}
 
-<div id="addStudentContainer" class="container">
-    {{ wtf.quick_form(form, extra_classes="panel panel-default", form_type="horizontal", id="removeStudentForm") }}
+<div id="removeStudentContainer" class="container panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Remove Student From Tracker</h3>
+    </div>
+    {{ wtf.quick_form(form, extra_classes="panel-body", form_type="horizontal", id="removeStudentForm") }}
 </div>
 
 {% endblock %}

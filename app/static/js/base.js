@@ -12,7 +12,20 @@
             return rex.test($(this).text());
         }).show();
 
-    })
+    });
+
+    // $("#pawprintField").keyup(function() {
+	// 	var pawPrintToRemove = $("#pawprintField").val();
+	// 	if (pawPrintToRemove.length >= 2) {
+	// 		$.get( "/api/searchPawprint/" + pawPrintToRemove)
+	// 		  .done(function( data ) {
+	// 		    $("#pawprintField").autocomplete({
+     //                source: data.json_list
+     //            });
+	// 		  });
+    //
+	// 	}
+	// });
 
 }(jQuery));
 

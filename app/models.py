@@ -42,9 +42,10 @@ class Student(db.Model):
 
 class Point(db.Model):
     __tablename__ = 'points'
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     amount = db.Column(db.Float, nullable=False, default=0)
-    type = db.Column(db.Integer, db.ForeignKey('infractionTypes.id'))
+    type = db.Column(db.String(80))
     why = db.Column(db.String(140))
     when = db.Column(db.Date)
     supervisor = db.Column(db.String(20))
@@ -69,7 +70,7 @@ class OldPoint(db.Model):
     __tablename__ = 'old_points'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     amount = db.Column(db.Float, nullable=False, default=0)
-    type = db.Column(db.Integer, db.ForeignKey('infractionTypes.id'))
+    type = db.Column(db.String(80))
     why = db.Column(db.String(140))
     when = db.Column(db.Date)
     supervisor = db.Column(db.String(20))
@@ -89,7 +90,7 @@ class OldPoint(db.Model):
 class Warn(db.Model):
     __tablename__ = 'warns'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    type = db.Column(db.Integer, db.ForeignKey('infractionTypes.id'))
+    type = db.Column(db.String(80))
     why = db.Column(db.String(140))
     when = db.Column(db.Date)
     supervisor = db.Column(db.String(20))
