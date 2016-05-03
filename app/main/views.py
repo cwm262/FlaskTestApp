@@ -9,7 +9,8 @@ from . import main
 from .. import login_manager, db
 from config import RESULTS_PER_PAGE
 import datetime
-
+import dateutil.parser as dateparser
+from sqlalchemy import or_
 
 @main.app_errorhandler(404)
 def not_found(error):
@@ -205,7 +206,11 @@ def points(page=1):
     form = SearchPointsForm()
     if form.validate_on_submit():
         query = form.pointsSearchField.data
-        results = Point.query.filter(Point.why.ilike('%'+query+'%'))
+        results = Point.query.filter(or_(Point.why.ilike('%'+query+'%'), Point.type.ilike('%'+query+'%'),
+                                         Point.student_id.ilike('%'+query+'%'), Point.issuer_id.ilike('%'+query+'%'),
+                                         Point.supervisor.ilike('%'+query+'%')))
+        if not results:
+            results = Point.query.filter(Point.when == query)
         return render_template("points.html", query=query, results=results, students=students, form=form)
     return render_template("points.html", points=points, students=students, form=form)
 
