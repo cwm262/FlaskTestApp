@@ -26,6 +26,21 @@ class PointsForm(Form):
     submit = SubmitField('Submit')
 
 
+class RewardForm(Form):
+    removePointsField = SelectField("How many points would you like to remove?", choices=[('.25', '.25 points'),
+                                                                                          ('.5', '.5 points'),
+                                                                                          ('.75', '.75 points'),
+                                                                                          ('1', '1 point'),
+                                                                                          ('1.5', '1.5 points'),
+                                                                                          ('2', '2 points'),
+                                                                                          ('2.5', '2.5 points'),
+                                                                                          ('3', '3 points')],
+                                    validators=[DataRequired()])
+    whyField = StringField('Briefly (in < 140 characters) describe why you are removing points: ',
+                           validators=[Length(min=3, max=140)])
+    submit = SubmitField('Submit')
+
+
 class PasswordChangeForm(Form):
     currentPassword = PasswordField('Current Password: ', validators=[DataRequired('You must enter your password.')])
     newPassword = PasswordField('New Password: ', validators=[InputRequired(), Length(min=8, max=40),

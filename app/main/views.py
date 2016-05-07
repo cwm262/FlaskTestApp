@@ -3,7 +3,7 @@ from flask import render_template, flash, redirect, url_for, abort, json
 from flask.ext.login import login_user, current_user, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from ..models import User, Student, Point, Warn, InfractionType, OldPoint
-from .forms import LoginForm, PointsForm, PasswordChangeForm, AddStudentForm, RemoveStudentForm, SearchPointsForm
+from .forms import LoginForm, PointsForm, PasswordChangeForm, AddStudentForm, RemoveStudentForm, SearchPointsForm, RewardForm
 from . import main
 from .. import login_manager, db
 from config import RESULTS_PER_PAGE
@@ -104,6 +104,30 @@ def givepointspage(pawprint):
             abort(500)
     now = datetime.datetime.today()
     return render_template('doPunish.html', student=student, time=now, form=form)
+
+
+@main.route('/students/<pawprint>/remove-points', methods=['GET', 'POST'])
+def rewardpage(pawprint):
+    if not current_user.is_authenticated:
+        return redirect(url_for('.login'))
+    student = Student.query.get(pawprint)
+    if student is None:
+        abort(404)
+    form = RewardForm()
+    if form.validate_on_submit():
+        try:
+            point_total = student.pointTotal
+            points_to_remove = float(form.removePointsField.data)
+            new_point_total = point_total - points_to_remove
+            if new_point_total < 0:
+                raise Exception("Cannot go into negative points.")
+            student.pointTotal = new_point_total
+            db.session.commit()
+            flash("Points removed.", 'success')
+            return redirect(url_for('.student', pawprint=pawprint))
+        except Exception as e:
+            abort(500)
+    return render_template('doReward.html', student=student, form=form)
 
 
 @main.route('/profile/<username>')

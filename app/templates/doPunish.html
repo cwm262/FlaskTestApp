@@ -6,7 +6,12 @@
 {% block content %}
 
 <div class="container">
-    {{ wtf.quick_form(form, extra_classes="panel panel-default", form_type="horizontal", id="submitPtsForm") }}
+    <div class="panel panel-default panel-heading">
+        Give Points or Warnings to: <mark>{{ student.lname }}, {{ student.fname }}</mark> -- Current Point Total: <mark>{{ student.pointTotal }} </mark>
+    </div>
+</div>
+<div class="container">
+    {{ wtf.quick_form(form, extra_classes="panel panel-default", form_type="horizontal", id="rewardForm") }}
 </div>
 
 {% endblock %}

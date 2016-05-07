@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Remove Points - {{ student.lname }}, {{ student.fname }}{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="panel panel-default panel-heading">
+        Remove Points from: <mark>{{ student.lname }}, {{ student.fname }}</mark> -- Current Point Total: <mark>{{ student.pointTotal }} </mark>
+    </div>
+</div>
+<div class="container">
+    {{ wtf.quick_form(form, extra_classes="panel panel-default", form_type="horizontal", id="submitPtsForm") }}
+</div>
+
+{% endblock %}

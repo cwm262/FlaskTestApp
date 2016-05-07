@@ -45,7 +45,11 @@
 
 <div id="punishBtnContainer" class="container">
     <input type="hidden" name="paw" id="hiddenPaw" value="{{ student.pawprint }}"/>
-    <button type="button" class="btn btn-danger col-xs-4 col-xs-offset-4" onclick="window.location.href = '{{url_for(".givepointspage", pawprint=student.pawprint)}}'" id="submitPtsBtn">PUNISH</button>
+    <button type="button" class="btn btn-danger col-xs-4 col-xs-offset-4" onclick="window.location.href = '{{url_for(".givepointspage", pawprint=student.pawprint)}}'" id="submitPtsBtn">Give Points or Warn</button>
+</div>
+
+<div id="rewardBtnContainer" class="container">
+    <button type="button" class="btn btn-success col-xs-4 col-xs-offset-4" onclick="window.location.href = '{{ url_for(".rewardpage", pawprint=student.pawprint) }}'" id="rewardBtn">Remove Points</button>
 </div>
 
 <div class="btn-group btn-group-justified" role="group" aria-label="...">
