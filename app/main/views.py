@@ -1,7 +1,6 @@
 import collections
-from flask import request, render_template, flash, session, redirect, url_for, abort, json, jsonify
-from flask.ext.login import login_required, login_user, current_user, logout_user
-from flask.ext.bcrypt import Bcrypt
+from flask import render_template, flash, redirect, url_for, abort, json
+from flask.ext.login import login_user, current_user, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from ..models import User, Student, Point, Warn, InfractionType, OldPoint
 from .forms import LoginForm, PointsForm, PasswordChangeForm, AddStudentForm, RemoveStudentForm, SearchPointsForm
@@ -9,8 +8,8 @@ from . import main
 from .. import login_manager, db
 from config import RESULTS_PER_PAGE
 import datetime
-import dateutil.parser as dateparser
 from sqlalchemy import or_
+
 
 @main.app_errorhandler(404)
 def not_found(error):
@@ -207,19 +206,26 @@ def points(page=1):
         results = Point.query.filter(or_(Point.why.ilike('%'+query+'%'), Point.type.ilike('%'+query+'%'),
                                          Point.student_id.ilike('%'+query+'%'), Point.issuer_id.ilike('%'+query+'%'),
                                          Point.supervisor.ilike('%'+query+'%')))
-        if not results:
-            results = Point.query.filter(Point.when == query)
         return render_template("points.html", query=query, results=results, students=students, form=form)
     return render_template("points.html", points=points, students=students, form=form)
 
 
-@main.route('/warnings')
-def warnings():
+@main.route('/warnings', methods=['GET', 'POST'])
+@main.route('/warnings/<int:page>', methods=['GET', 'POST'])
+def warnings(page=1):
     if not current_user.is_authenticated:
         return redirect(url_for('.login'))
-    warns = Warn.query.order_by(Warn.when.desc()).all()
+    warns = Warn.query.order_by(Warn.when.desc()).paginate(page, RESULTS_PER_PAGE, False)
     students = Student.query.order_by(Student.lname).all()
-    return render_template("warnings.html", warns=warns, students=students)
+    form = SearchPointsForm()
+    if form.validate_on_submit():
+        query = form.pointsSearchField.data
+        results = Warn.query.filter(or_(Warn.why.ilike('%' + query + '%'), Warn.type.ilike('%' + query + '%'),
+                                        Warn.student_id.ilike('%' + query + '%'),
+                                        Warn.issuer_id.ilike('%' + query + '%'),
+                                        Warn.supervisor.ilike('%' + query + '%')))
+        return render_template("points.html", query=query, results=results, students=students, form=form)
+    return render_template("warnings.html", warns=warns, students=students, form=form)
 
 
 @main.route('/analytics')
@@ -284,7 +290,7 @@ def give_points(form, pawprint, student):
         db.session.commit()
         flash("Points issued.", 'success')
     except Exception as e:
-        raise Exception('Something went wrong: ' + e)
+        raise Exception('Something went wrong: ' + str(e))
 
 
 def give_warnings(form, pawprint):
@@ -297,4 +303,4 @@ def give_warnings(form, pawprint):
         db.session.commit()
         flash("Warning issued.", 'success')
     except Exception as e:
-        raise Exception('Something went wrong: ' + e)
+        raise Exception('Something went wrong: ' + str(e))

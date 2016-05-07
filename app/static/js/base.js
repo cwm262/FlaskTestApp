@@ -16,14 +16,14 @@
 
 }(jQuery));
 
-$(document).ajaxStart(function(){
-    $("#loader").show();
-});
-
-$(document).ajaxStop(function(){
-    $("#loader").hide();
-    $("#ajaxTarget").show();
-});
+// $(document).ajaxStart(function(){
+//     $("#loader").show();
+// });
+//
+// $(document).ajaxStop(function(){
+//     $("#loader").hide();
+//     $("#ajaxTarget").show();
+// });
 
 $(document).ready(function () {
 
