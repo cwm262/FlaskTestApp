@@ -2,7 +2,7 @@ import collections
 from flask import request, render_template, flash, session, redirect, url_for, abort, json, jsonify
 from flask.ext.login import login_required, login_user, current_user, logout_user
 from flask.ext.bcrypt import Bcrypt
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from ..models import User, Student, Point, Warn, InfractionType, OldPoint
 from .forms import LoginForm, PointsForm, PasswordChangeForm, AddStudentForm, RemoveStudentForm, SearchPointsForm
 from . import main
@@ -37,7 +37,6 @@ def login():
             if not approved:
                 error = "You have not been granted access yet."
                 return render_template("login.html", form=form, error=error)
-            #bcrypt = Bcrypt()
             pwhash = user.password
             password = form.password.data
             if check_password_hash(pwhash, password):
@@ -128,9 +127,8 @@ def change_password(username):
     form = PasswordChangeForm()
     if form.validate_on_submit():
         try:
-            bcrypt = Bcrypt()
-            if bcrypt.check_password_hash(user.password, form.currentPassword.data):
-                newPassword = bcrypt.generate_password_hash(form.confirm.data)
+            if check_password_hash(user.password, form.currentPassword.data):
+                newPassword = generate_password_hash(form.confirm.data)
                 user.password = newPassword
                 db.session.commit()
             return redirect(url_for('.logout'))
