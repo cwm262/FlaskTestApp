@@ -48,11 +48,17 @@
     <button type="button" class="btn btn-danger col-xs-4 col-xs-offset-4" onclick="window.location.href = '{{url_for(".givepointspage", pawprint=student.pawprint)}}'" id="submitPtsBtn">PUNISH</button>
 </div>
 
-<ul class="nav nav-tabs nav-justified">
-  <li><a href="#" id="viewSummaryBtn">Summary</a></li>
-  <li><a href="#" id="viewPtsBtn">Points History</a></li>
-  <li><a href="#" id="viewWarnBtn">Warning History</a></li>
-</ul>
+<div class="btn-group btn-group-justified" role="group" aria-label="...">
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-default" id="viewSummaryBtn">Summary</button>
+    </div>
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-default" id="viewPtsBtn">Points History</button>
+    </div>
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-default" id="viewWarnBtn">Warning History</button>
+    </div>
+</div>
 <div id="loader" class="container" style="display:none">
     <div class="row col-md-offset-5">
         <img src="{{ url_for('static', filename='images/332.gif') }}" alt="Loading">

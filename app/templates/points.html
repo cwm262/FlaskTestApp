@@ -3,10 +3,22 @@
 
 {% block title %}Student Center Point Tracker - Complete Point List{% endblock %}
 
+{% block scripts %}
+    {{super()}}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.2.0/list.min.js"></script>
+    <script>
+        var options = {
+          valueNames: [ 'date', 'amount' ]
+        };
+
+        var userList = new List('points', options);
+    </script>
+{% endblock %}
+
 {% block content %}
 
 <div class="container">
-    <div class="table-responsive panel panel-default">
+    <div id="points" class="table-responsive panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Point History, Ordered by Date</h3>
         </div>
@@ -19,29 +31,34 @@
                 Showing results for: {{ query }} <br>
                 <a href="{{ url_for('.points') }}">Clear Search Results</a>
             {% endif %}
+            <br><br><mark><small>You may search TYPE, WHY, PAWPRINT, SUPERVISOR, OR MANAGER below</small></mark>
             {{ wtf.quick_form(form, extra_classes="panel-body", form_type="horizontal", id="searchPointsForm") }}
         </div>
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>
-                    <th>Date Assigned</th>
+                    <th><button type="button" class="btn btn-default sort" data-sort="date" aria-label="Sort">
+                      <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                    </button> Date Assigned </th>
                     <th>Type</th>
                     <th>Why</th>
                     <th>Student's PawPrint</th>
-                    <th>Amount</th>
+                    <th><button type="button" class="btn btn-default sort" data-sort="amount" aria-label="Sort">
+                      <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                    </button> Amount</th>
                     <th>Supervisor</th>
                     <th>Manager</th>
                 </tr>
             </thead>
-            <tbody class="searchable">
+            <tbody class="list">
                 {% if results %}
                 {% for result in results %}
                     <tr class='studentListRow active'>
-                    <td>{{ result.when }}</td>
+                    <td class="date">{{ result.when }}</td>
                     <td>{{ result.type }}</td>
                     <td>{{ result.why }}</td>
                     <td>{{ result.student_id }}</td>
-                    <td>{{ result.amount }}</td>
+                    <td class="amount">>{{ result.amount }}</td>
                     <td>{{ result.supervisor }}</td>
                     <td>{{ result.issuer_id }}</td>
                 </tr>
@@ -49,11 +66,11 @@
                 {% else %}
                 {% for point in points.items %}
                 <tr class='studentListRow active'>
-                    <td>{{ point.when }}</td>
+                    <td class="date">{{ point.when }}</td>
                     <td>{{ point.type }}</td>
                     <td>{{ point.why }}</td>
                     <td>{{ point.student_id }}</td>
-                    <td>{{ point.amount }}</td>
+                    <td class="amount">{{ point.amount }}</td>
                     <td>{{ point.supervisor }}</td>
                     <td>{{ point.issuer_id }}</td>
                 </tr>
