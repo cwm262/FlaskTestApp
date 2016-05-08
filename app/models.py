@@ -54,6 +54,7 @@ class Point(db.Model):
     issuer = db.relationship(User, uselist=False)
     student_id = db.Column(db.String, db.ForeignKey('students.pawprint'))
     active = db.Column(db.BOOLEAN, default=True)
+    acknowledged = db.Column(db.BOOLEAN, default=False)
 
     def __init__(self, amount, type, why, when, supervisor, issuer_id, student_id):
         self.amount = amount
@@ -87,27 +88,6 @@ class PointsRemovedHistory(db.Model):
         self.student_id = student_id
 
 
-# class OldPoint(db.Model):
-#     __tablename__ = 'old_points'
-#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-#     amount = db.Column(db.Float, nullable=False, default=0)
-#     type = db.Column(db.String(80))
-#     why = db.Column(db.String(140))
-#     when = db.Column(db.Date)
-#     supervisor = db.Column(db.String(20))
-#     issuer_id = db.Column(db.String, db.ForeignKey('users.username'))
-#     student_id = db.Column(db.String, db.ForeignKey('students.pawprint'))
-#
-#     def __init__(self, amount, type, why, when, supervisor, issuer_id, student_id):
-#         self.amount = amount
-#         self.type = type
-#         self.why = why
-#         self.when = when
-#         self.supervisor = supervisor
-#         self.issuer_id = issuer_id
-#         self.student_id = student_id
-
-
 class Warn(db.Model):
     __tablename__ = 'warns'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -119,7 +99,6 @@ class Warn(db.Model):
     issuer = db.relationship(User, uselist=False)
     student_id = db.Column(db.String, db.ForeignKey('students.pawprint'))
     active = db.Column(db.BOOLEAN, default=True)
-
 
     def __init__(self, type, why, when, supervisor, issuer_id, student_id):
         self.type = type

@@ -5,15 +5,31 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from ..models import User, Student, Point, Warn, InfractionType, PointsRemovedHistory
 from .forms import LoginForm, PointsForm, PasswordChangeForm, AddStudentForm, RemoveStudentForm, SearchPointsForm, RewardForm
 from . import main
-from .. import login_manager, db
+from .. import login_manager, db, mail
 from config import RESULTS_PER_PAGE
+from config import DevelopmentConfig
 import datetime
 from sqlalchemy import or_
+from itsdangerous import URLSafeSerializer
+from flask_mail import Message
 
 
 @main.app_errorhandler(404)
 def not_found(error):
     return render_template('404.html'), 404
+
+
+@main.route('/acknowledge/<token>')
+def confirm_punish(token):
+    try:
+        point = confirm_token(token)
+        if point:
+            point.acknowledged = True
+            db.session.commit()
+            flash("Thank you for acknowledging your points.", "success")
+    except:
+        flash("The acknowledgement link is invalid or has expired.", "danger")
+    return render_template("ack.html")
 
 
 @main.route('/')
@@ -330,6 +346,11 @@ def give_points(form, pawprint, student):
         newpts = Point(amount, typeOf, form.whyField.data, form.whenField.data,
                        form.supervisorField.data, current_user.username, pawprint)
         student.pointTotal += float(amount)
+        #token = generate_confirmation_token(newpts)
+        #confirm_url = url_for('confirm_punish', token=token, _external=True)
+        #html = render_template('email.html', confirm_url=confirm_url, type=newpts.typeOf, amount=newpts.amount)
+        #subject = "You have been given points. Please acknowledge."
+        #send_email(pawprint+"@mail.missouri.edu", subject, html)
         db.session.add(newpts)
         db.session.commit()
         flash("Points issued.", 'success')
@@ -348,3 +369,22 @@ def give_warnings(form, pawprint):
         flash("Warning issued.", 'success')
     except Exception as e:
         raise Exception('Something went wrong: ' + str(e))
+
+
+def generate_confirmation_token(id):
+    serializer = URLSafeSerializer(DevelopmentConfig.SECRET_KEY)
+    return serializer.dumps(id, salt=DevelopmentConfig.SECURITY_PASSWORD_SALT)
+
+
+def confirm_token(token):
+    serializer = URLSafeSerializer(DevelopmentConfig.SECRET_KEY)
+    try:
+        point = serializer.loads(token, salt=DevelopmentConfig.SECURITY_PASSWORD_SALT)
+    except:
+        return False
+    return point
+
+
+def send_email(to, subject, template):
+    msg = Message(subject, recipients=[to], html=template, sender=DevelopmentConfig.MAIL_DEFAULT_SENDER)
+    mail.send(msg)
