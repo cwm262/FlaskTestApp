@@ -8,7 +8,7 @@ class User(db.Model):
     username = db.Column(db.String, primary_key=True)
     password = db.Column(db.String)
     authenticated = db.Column(db.BOOLEAN, default=False)
-    approved = db.Column(db.BOOLEAN, default=False)
+    approved = db.Column(db.BOOLEAN, default=True)
 
     def is_active(self):
         return True
@@ -29,7 +29,7 @@ class Student(db.Model):
     fname = db.Column(db.String(50))
     lname = db.Column(db.String(50))
     pointTotal = db.Column(db.Float, default=0)
-    currentEmployee = db.Column(db.Boolean, default=True)
+    active = db.Column(db.Boolean, default=True)
     when_added = db.Column(db.DateTime)
     points = db.relationship('Point', cascade="all, delete", backref='students', lazy='dynamic')
     warnings = db.relationship('Warn', cascade="all, delete", backref='students', lazy='dynamic')
@@ -53,6 +53,7 @@ class Point(db.Model):
     issuer_id = db.Column(db.String, db.ForeignKey('users.username'))
     issuer = db.relationship(User, uselist=False)
     student_id = db.Column(db.String, db.ForeignKey('students.pawprint'))
+    active = db.Column(db.BOOLEAN, default=True)
 
     def __init__(self, amount, type, why, when, supervisor, issuer_id, student_id):
         self.amount = amount
@@ -67,25 +68,44 @@ class Point(db.Model):
         self.student_id = student_id
 
 
-class OldPoint(db.Model):
-    __tablename__ = 'old_points'
+class PointsRemovedHistory(db.Model):
+    __tablename__ = 'points_removed_history'
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     amount = db.Column(db.Float, nullable=False, default=0)
-    type = db.Column(db.String(80))
     why = db.Column(db.String(140))
     when = db.Column(db.Date)
-    supervisor = db.Column(db.String(20))
-    issuer_id = db.Column(db.String)
-    student_id = db.Column(db.String)
+    issuer_id = db.Column(db.String, db.ForeignKey('users.username'))
+    issuer = db.relationship(User, uselist=False)
+    student_id = db.Column(db.String, db.ForeignKey('students.pawprint'))
 
-    def __init__(self, amount, type, why, when, supervisor, issuer_id, student_id):
+    def __init__(self, amount, why, when, issuer_id, student_id):
         self.amount = amount
-        self.type = type
         self.why = why
         self.when = when
-        self.supervisor = supervisor
         self.issuer_id = issuer_id
         self.student_id = student_id
+
+
+# class OldPoint(db.Model):
+#     __tablename__ = 'old_points'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     amount = db.Column(db.Float, nullable=False, default=0)
+#     type = db.Column(db.String(80))
+#     why = db.Column(db.String(140))
+#     when = db.Column(db.Date)
+#     supervisor = db.Column(db.String(20))
+#     issuer_id = db.Column(db.String, db.ForeignKey('users.username'))
+#     student_id = db.Column(db.String, db.ForeignKey('students.pawprint'))
+#
+#     def __init__(self, amount, type, why, when, supervisor, issuer_id, student_id):
+#         self.amount = amount
+#         self.type = type
+#         self.why = why
+#         self.when = when
+#         self.supervisor = supervisor
+#         self.issuer_id = issuer_id
+#         self.student_id = student_id
 
 
 class Warn(db.Model):
@@ -98,6 +118,8 @@ class Warn(db.Model):
     issuer_id = db.Column(db.String, db.ForeignKey('users.username'))
     issuer = db.relationship(User, uselist=False)
     student_id = db.Column(db.String, db.ForeignKey('students.pawprint'))
+    active = db.Column(db.BOOLEAN, default=True)
+
 
     def __init__(self, type, why, when, supervisor, issuer_id, student_id):
         self.type = type

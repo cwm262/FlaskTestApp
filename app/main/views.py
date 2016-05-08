@@ -2,7 +2,7 @@ import collections
 from flask import render_template, flash, redirect, url_for, abort, json
 from flask.ext.login import login_user, current_user, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
-from ..models import User, Student, Point, Warn, InfractionType, OldPoint
+from ..models import User, Student, Point, Warn, InfractionType
 from .forms import LoginForm, PointsForm, PasswordChangeForm, AddStudentForm, RemoveStudentForm, SearchPointsForm, RewardForm
 from . import main
 from .. import login_manager, db
@@ -34,7 +34,7 @@ def login():
         if user:
             approved = user.approved
             if not approved:
-                error = "You have not been granted access yet."
+                error = "You do not have access to this application."
                 return render_template("login.html", form=form, error=error)
             pwhash = user.password
             password = form.password.data
@@ -67,7 +67,7 @@ def logout():
 def studentlist():
     if not current_user.is_authenticated:
         return redirect(url_for('.login'))
-    students = Student.query.order_by(Student.lname).all()
+    students = Student.query.filter_by(active=True).order_by(Student.lname)
     return render_template("studentlist.html", students=students)
 
 
@@ -75,7 +75,7 @@ def studentlist():
 def student(pawprint):
     if not current_user.is_authenticated:
         return redirect(url_for('.login'))
-    student = Student.query.filter_by(pawprint=pawprint).first()
+    student = Student.query.filter_by(pawprint=pawprint, active=True).first()
     if student is None:
         abort(404)
     now = datetime.datetime.today()
@@ -86,7 +86,7 @@ def student(pawprint):
 def givepointspage(pawprint):
     if not current_user.is_authenticated:
         return redirect(url_for('.login'))
-    student = Student.query.filter_by(pawprint=pawprint).first()
+    student = Student.query.filter_by(pawprint=pawprint, active=True).first()
     if student is None:
         abort(404)
     form = PointsForm()
@@ -110,7 +110,7 @@ def givepointspage(pawprint):
 def rewardpage(pawprint):
     if not current_user.is_authenticated:
         return redirect(url_for('.login'))
-    student = Student.query.get(pawprint)
+    student = Student.query.filter_by(pawprint=pawprint, active=True).first()
     if student is None:
         abort(404)
     form = RewardForm()
@@ -120,10 +120,11 @@ def rewardpage(pawprint):
             points_to_remove = float(form.removePointsField.data)
             new_point_total = point_total - points_to_remove
             if new_point_total < 0:
-                raise Exception("Cannot go into negative points.")
-            student.pointTotal = new_point_total
-            db.session.commit()
-            flash("Points removed.", 'success')
+                flash("You can not lower a student's point total into the negatives.", "warning")
+            else:
+                student.pointTotal = new_point_total
+                db.session.commit()
+                flash("Points removed.", 'success')
             return redirect(url_for('.student', pawprint=pawprint))
         except Exception as e:
             abort(500)
@@ -171,7 +172,21 @@ def add_student(username):
     if form.validate_on_submit():
         try:
             pawprint = form.pawprintField.data
-            if not Student.query.get(pawprint):
+            student_to_be_added = Student.query.get(pawprint)
+            if student_to_be_added:
+                if student_to_be_added.active is False:
+                    student_to_be_added.active = True
+                    points = Point.query.filter_by(student_id=pawprint).all()
+                    for point in points:
+                        point.active = True
+                    warns = Warn.query.filter_by(student_id=pawprint).all()
+                    for warn in warns:
+                        warn.active = True
+                    db.session.commit()
+                    flash("We found a student with that pawprint already in the system, but marked as inactive. We have reactivated this student.")
+                else:
+                    flash("Student is already in system and active. No action taken.")
+            else:
                 first_name = form.firstNameField.data
                 last_name = form.lastNameField.data
                 newStudent = Student(pawprint, first_name, last_name)
@@ -203,10 +218,11 @@ def remove_student(username):
             if toDelete:
                 points = Point.query.filter_by(student_id=pawprint).all()
                 for point in points:
-                    oldPoint = OldPoint(point.amount, point.type, point.why, point.when, point.supervisor,
-                                        point.issuer_id, point.student_id)
-                    db.session.add(oldPoint)
-                db.session.delete(toDelete)
+                    point.active = False
+                warns = Warn.query.filter_by(student_id=pawprint).all()
+                for warn in warns:
+                    warn.active = False
+                toDelete.active = False
                 db.session.commit()
                 flash("Student removed successfully.", 'success')
             else:
@@ -222,14 +238,14 @@ def remove_student(username):
 def points(page=1):
     if not current_user.is_authenticated:
         return redirect(url_for('.login'))
-    points = Point.query.order_by(Point.when.desc()).paginate(page, RESULTS_PER_PAGE, False)
-    students = Student.query.order_by(Student.lname).all()
+    points = Point.query.filter_by(active=True).order_by(Point.when.desc()).paginate(page, RESULTS_PER_PAGE, False)
+    students = Student.query.filter_by(active=True).order_by(Student.lname)
     form = SearchPointsForm()
     if form.validate_on_submit():
         query = form.pointsSearchField.data
         results = Point.query.filter(or_(Point.why.ilike('%'+query+'%'), Point.type.ilike('%'+query+'%'),
                                          Point.student_id.ilike('%'+query+'%'), Point.issuer_id.ilike('%'+query+'%'),
-                                         Point.supervisor.ilike('%'+query+'%')))
+                                         Point.supervisor.ilike('%'+query+'%')), Point.active is True)
         return render_template("points.html", query=query, results=results, students=students, form=form)
     return render_template("points.html", points=points, students=students, form=form)
 
@@ -240,7 +256,7 @@ def warnings(page=1):
     if not current_user.is_authenticated:
         return redirect(url_for('.login'))
     warns = Warn.query.order_by(Warn.when.desc()).paginate(page, RESULTS_PER_PAGE, False)
-    students = Student.query.order_by(Student.lname).all()
+    students = Student.query.filter_by(active=True).order_by(Student.lname)
     form = SearchPointsForm()
     if form.validate_on_submit():
         query = form.pointsSearchField.data
