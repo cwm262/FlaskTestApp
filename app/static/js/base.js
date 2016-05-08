@@ -47,11 +47,66 @@ $(document).ready(function () {
                                     <div class='panel-body'>\
                                         Pawprint:" +  student.pawprint + "<hr>\
                                         <a href='mailto:" + student.pawprint + "@mail.missouri.edu'>" + student.pawprint + "@mail.missouri.edu</a><hr>\
-                                        In tracker since: " + moment(student.whenAdded).format('MM/DD/YYYY') + "<hr>\
+                                        In tracker since: " + moment(student.whenAdded).format('YYYY-MM-DD') + "<hr>\
                                         Point Total: " + student.pointTotal + "\
                                     </div>\
                                 </div>";
                 $("#ajaxTarget").html(profileWin);
+            })
+    });
+
+    $('#viewRewardBtn').click(function(){
+        event.preventDefault();
+        var paw = $("#hiddenPaw").val();
+        var filters = [{"name": "student_id", "op": "like", "val": paw}];
+        $.ajax({
+          url: '/api/points_removed_history',
+          data: {"q": JSON.stringify({"filters": filters})},
+          dataType: "json",
+          contentType: "application/json"
+        })
+            .done( function(response){
+                var r = response;
+                var history = r.objects;
+                var hisTable = "<div class='panel panel-default'>\
+                                    <div class='panel-heading'>\
+                                        <h3 class='panel-title'>Point Removal History</h3>\
+                                    </div>\
+                                    <div class='panel-body'>\
+                                        <div class='input-group'> <span class='input-group-addon'>Filter</span>\
+                                            <input id='filter' type='text' class='form-control' placeholder='Type here...'>\
+                                        </div>\
+                                    </div>\
+                                    <table class='table table-bordered'>\
+                                        <thead>\
+                                            <tr>\
+                                                <th>Date Removed</th>\
+                                                <th>Amount</th>\
+                                                <th>Why</th>\
+                                                <th>Manager</th>\
+                                            </tr>\
+                                        </thead>\
+                                        <tbody class='searchable'>";
+                $.each(history, function(i, val){
+                    hisTable += "<tr class='studentListRow active'>\
+                        <td>" + moment(val.when).format('YYYY-MM-DD') + "</td>\
+                        <td>" + val.amount + "</td>\
+                        <td>" + val.why + "</td>\
+                        <td>" + val.issuer_id + "</td>\
+                        </tr>";
+                });
+                hisTable += "</tbody>\
+                    </table>\
+                    </div>";
+                $("#ajaxTarget").html(hisTable);
+                $('#filter').keyup(function () {
+                    var rex = new RegExp($(this).val(), 'i');
+                    $('.searchable tr').hide();
+                    $('.searchable tr').filter(function () {
+                        return rex.test($(this).text());
+                    }).show();
+                })
+
             })
     });
 
@@ -89,7 +144,7 @@ $(document).ready(function () {
                                         <tbody class='searchable'>";
                 $.each(warns, function(i, val){
                     warnTable += "<tr class='studentListRow active'>\
-                        <td>" + moment(val.when).format('MM/DD/YYYY') + "</td>\
+                        <td>" + moment(val.when).format('YYYY-MM-DD') + "</td>\
                         <td>" + val.type + "</td>\
                         <td>" + val.why + "</td>\
                         <td>" + val.supervisor + "</td>\
@@ -145,7 +200,7 @@ $(document).ready(function () {
                                         <tbody class='searchable'>";
                 $.each(points, function(i, val){
                     ptsTable += "<tr class='studentListRow active'>\
-                        <td>" + moment(val.when).format('MM/DD/YYYY') + "</td>\
+                        <td>" + moment(val.when).format('YYYY-MM-DD') + "</td>\
                         <td>" + val.type + "</td>\
                         <td>" + val.why + "</td>\
                         <td>" + val.amount + "</td>\

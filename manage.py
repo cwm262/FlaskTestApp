@@ -13,9 +13,11 @@ if __name__ == '__main__':
         db.session.commit()
         mgr = APIManager(app, flask_sqlalchemy_db=db)
         mgr.create_api(models.Point, include_columns=['amount', 'type', 'why', 'when', 'supervisor', 'student_id'],
-                       methods=['GET', 'DELETE'])
+                       methods=['GET'])
         mgr.create_api(models.Warn, include_columns=['type', 'why', 'when', 'supervisor', 'student_id'],
                        methods=['GET'])
+        mgr.create_api(models.PointsRemovedHistory, include_columns=['amount', 'why', 'when', 'issuer_id',
+                                                                     'student_id'], methods=['GET'])
         mgr.create_api(models.Student, methods=['GET', 'POST', 'DELETE'])
         username = 'bob'
         password = 'password123'

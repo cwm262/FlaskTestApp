@@ -2,7 +2,7 @@ import collections
 from flask import render_template, flash, redirect, url_for, abort, json
 from flask.ext.login import login_user, current_user, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
-from ..models import User, Student, Point, Warn, InfractionType
+from ..models import User, Student, Point, Warn, InfractionType, PointsRemovedHistory
 from .forms import LoginForm, PointsForm, PasswordChangeForm, AddStudentForm, RemoveStudentForm, SearchPointsForm, RewardForm
 from . import main
 from .. import login_manager, db
@@ -122,6 +122,10 @@ def rewardpage(pawprint):
             if new_point_total < 0:
                 flash("You can not lower a student's point total into the negatives.", "warning")
             else:
+                now = datetime.datetime.today()
+                new_point_removal_log_entry = PointsRemovedHistory(points_to_remove, form.whyField.data,
+                                                                   now, current_user.username, pawprint)
+                db.session.add(new_point_removal_log_entry)
                 student.pointTotal = new_point_total
                 db.session.commit()
                 flash("Points removed.", 'success')
