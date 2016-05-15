@@ -3,6 +3,7 @@ from flask.ext.login import LoginManager
 from flask.ext.moment import Moment
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
+from flask.ext.bcrypt import Bcrypt
 from config import config
 from flask_mail import Mail
 
@@ -13,7 +14,8 @@ bootstrap = Bootstrap(app)
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 moment = Moment(app)
+bcrypt = Bcrypt(app)
 mail = Mail(app)
 
-from app import views, models
+from app import routes, models
 
