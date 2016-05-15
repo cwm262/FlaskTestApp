@@ -1,25 +1,27 @@
 import collections
+import datetime
+
 from flask import render_template, flash, redirect, url_for, abort, json
 from flask.ext.login import login_user, current_user, logout_user
-from werkzeug.security import check_password_hash, generate_password_hash
-from ..models import User, Student, Point, Warn, InfractionType, PointsRemovedHistory
-from .forms import LoginForm, PointsForm, PasswordChangeForm, AddStudentForm, RemoveStudentForm, SearchPointsForm, RewardForm
-from . import main
-from .. import login_manager, db, mail
-from config import RESULTS_PER_PAGE
-from config import DevelopmentConfig
-import datetime
-from sqlalchemy import or_
-from itsdangerous import URLSafeSerializer
 from flask_mail import Message
+from itsdangerous import URLSafeSerializer
+from sqlalchemy import or_
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from app.forms import LoginForm, PointsForm, PasswordChangeForm, AddStudentForm, RemoveStudentForm, SearchPointsForm, RewardForm
+from config import DevelopmentConfig
+from config import RESULTS_PER_PAGE
+from app import app
+from app import login_manager, db, mail
+from app.models import User, Student, Point, Warn, InfractionType, PointsRemovedHistory
 
 
-@main.app_errorhandler(404)
+@app.errorhandler(404)
 def not_found(error):
     return render_template('404.html'), 404
 
 
-@main.route('/acknowledge/<token>')
+@app.route('/acknowledge/<token>')
 def confirm_punish(token):
     try:
         point = confirm_token(token)
@@ -32,18 +34,18 @@ def confirm_punish(token):
     return render_template("ack.html")
 
 
-@main.route('/')
+@app.route('/')
 def index():
     if not current_user.is_authenticated:
-        return redirect(url_for('.login'))
+        return redirect(url_for('login'))
     return render_template('index.html')
 
 
-@main.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
     if current_user is not None and current_user.is_authenticated:
-        return redirect(url_for('.index'))
+        return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.get(form.username.data)
@@ -59,7 +61,7 @@ def login():
                 db.session.add(user)
                 db.session.commit()
                 login_user(user, remember=True)
-                return redirect(url_for('.index'))
+                return redirect(url_for('index'))
             else:
                 error = "Your password is incorrect. Please try again."
         else:
@@ -67,30 +69,30 @@ def login():
     return render_template("login.html", form=form, error=error)
 
 
-@main.route('/logout')
+@app.route('/logout')
 def logout():
     if not current_user.is_authenticated:
-        return redirect(url_for('.login'))
+        return redirect(url_for('login'))
     user = current_user
     user.authenticated = False
     db.session.add(user)
     db.session.commit()
     logout_user()
-    return redirect(url_for('.login'))
+    return redirect(url_for('login'))
 
 
-@main.route('/students')
+@app.route('/students')
 def studentlist():
     if not current_user.is_authenticated:
-        return redirect(url_for('.login'))
+        return redirect(url_for('login'))
     students = Student.query.filter_by(active=True).order_by(Student.lname)
     return render_template("studentlist.html", students=students)
 
 
-@main.route('/students/<pawprint>', methods=['GET', 'POST'])
+@app.route('/students/<pawprint>', methods=['GET', 'POST'])
 def student(pawprint):
     if not current_user.is_authenticated:
-        return redirect(url_for('.login'))
+        return redirect(url_for('login'))
     student = Student.query.filter_by(pawprint=pawprint, active=True).first()
     if student is None:
         abort(404)
@@ -98,10 +100,10 @@ def student(pawprint):
     return render_template('student.html', student=student, time=now)
 
 
-@main.route('/students/<pawprint>/give-points', methods=['GET', 'POST'])
+@app.route('/students/<pawprint>/give-points', methods=['GET', 'POST'])
 def givepointspage(pawprint):
     if not current_user.is_authenticated:
-        return redirect(url_for('.login'))
+        return redirect(url_for('login'))
     student = Student.query.filter_by(pawprint=pawprint, active=True).first()
     if student is None:
         abort(404)
@@ -115,17 +117,17 @@ def givepointspage(pawprint):
     if form.validate_on_submit():
         try:
             do_punish(form, pawprint, student)
-            return redirect(url_for('.student', pawprint=pawprint))
+            return redirect(url_for('student', pawprint=pawprint))
         except Exception as e:
             abort(500)
     now = datetime.datetime.today()
     return render_template('doPunish.html', student=student, time=now, form=form)
 
 
-@main.route('/students/<pawprint>/remove-points', methods=['GET', 'POST'])
+@app.route('/students/<pawprint>/remove-points', methods=['GET', 'POST'])
 def rewardpage(pawprint):
     if not current_user.is_authenticated:
-        return redirect(url_for('.login'))
+        return redirect(url_for('login'))
     student = Student.query.filter_by(pawprint=pawprint, active=True).first()
     if student is None:
         abort(404)
@@ -145,28 +147,28 @@ def rewardpage(pawprint):
                 student.pointTotal = new_point_total
                 db.session.commit()
                 flash("Points removed.", 'success')
-            return redirect(url_for('.student', pawprint=pawprint))
+            return redirect(url_for('student', pawprint=pawprint))
         except Exception as e:
             abort(500)
     return render_template('doReward.html', student=student, form=form)
 
 
-@main.route('/profile/<username>')
+@app.route('/profile/<username>')
 def profile(username):
     if not current_user.is_authenticated:
-        return redirect(url_for('.login'))
+        return redirect(url_for('login'))
     if username != current_user.username:
-        return redirect(url_for('.index'))
+        return redirect(url_for('index'))
     user = User.query.get(username)
     return render_template('profile.html', user=user)
 
 
-@main.route('/profile/<username>/password-change', methods=['GET', 'POST'])
+@app.route('/profile/<username>/password-change', methods=['GET', 'POST'])
 def change_password(username):
     if not current_user.is_authenticated:
-        return redirect(url_for('.login'))
+        return redirect(url_for('login'))
     if username != current_user.username:
-        return redirect(url_for('.index'))
+        return redirect(url_for('index'))
     user = User.query.get(username)
     form = PasswordChangeForm()
     if form.validate_on_submit():
@@ -175,19 +177,19 @@ def change_password(username):
                 newPassword = generate_password_hash(form.confirm.data)
                 user.password = newPassword
                 db.session.commit()
-            return redirect(url_for('.logout'))
+            return redirect(url_for('logout'))
         except Exception as e:
             abort(500)
     flash("You will be asked to login again if your password change is successful", 'danger')
     return render_template('passChange.html', user=user, form=form)
 
 
-@main.route('/profile/<username>/add-student', methods=['GET', 'POST'])
+@app.route('/profile/<username>/add-student', methods=['GET', 'POST'])
 def add_student(username):
     if not current_user.is_authenticated:
-        return redirect(url_for('.login'))
+        return redirect(url_for('login'))
     if username != current_user.username:
-        return redirect(url_for('.index'))
+        return redirect(url_for('index'))
     form = AddStudentForm()
     if form.validate_on_submit():
         try:
@@ -213,18 +215,18 @@ def add_student(username):
                 db.session.add(newStudent)
                 db.session.commit()
                 flash("Student added successfully.", 'success')
-            return redirect(url_for(".profile", username=current_user.username))
+            return redirect(url_for("profile", username=current_user.username))
         except Exception as e:
             abort(500)
     return render_template('addStudent.html', form=form)
 
 
-@main.route('/profile/<username>/remove-student', methods=['GET', 'POST'])
+@app.route('/profile/<username>/remove-student', methods=['GET', 'POST'])
 def remove_student(username):
     if not current_user.is_authenticated:
-        return redirect(url_for('.login'))
+        return redirect(url_for('login'))
     if username != current_user.username:
-        return redirect(url_for('.index'))
+        return redirect(url_for('index'))
     form = RemoveStudentForm()
     pawprints = db.session.query(Student.pawprint).all()
     p = []
@@ -247,34 +249,47 @@ def remove_student(username):
                 flash("Student removed successfully.", 'success')
             else:
                 flash("Could not find student. Please verify that pawprint is correct.", "warning")
-            return redirect(url_for(".profile", username=current_user.username))
+            return redirect(url_for("profile", username=current_user.username))
         except Exception as e:
             abort(500)
     return render_template('removeStudent.html', form=form, student_pawprints=p)
 
 
-@main.route('/points', methods=['GET', 'POST'])
-@main.route('/points/<int:page>', methods=['GET', 'POST'])
-def points(page=1):
+@app.route('/points', methods=['GET', 'POST'])
+@app.route('/points/<int:page>', methods=['GET', 'POST'])
+@app.route('/points/<sort>', methods=['GET', 'POST'])
+@app.route('/points/<int:page>/<sort>', methods=['GET', 'POST'])
+def points(page=1, sort='date_desc'):
     if not current_user.is_authenticated:
-        return redirect(url_for('.login'))
-    points = Point.query.filter_by(active=True).order_by(Point.when.desc()).paginate(page, RESULTS_PER_PAGE, False)
+        return redirect(url_for('login'))
+    if sort == 'date_desc':
+        sort = "Date Descending"
+        points = Point.query.filter_by(active=True).order_by(Point.when.desc()).paginate(page, RESULTS_PER_PAGE, False)
+    elif sort == 'date_asc':
+        sort = "Date Ascending"
+        points = Point.query.filter_by(active=True).order_by(Point.when.asc()).paginate(page, RESULTS_PER_PAGE, False)
+    elif sort == 'point_asc':
+        sort = "Point Total, Ascending"
+        points = Point.query.filter_by(active=True).order_by(Point.amount.asc()).paginate(page, RESULTS_PER_PAGE, False)
+    elif sort == 'point_desc':
+        sort = "Point Total, Descending"
+        points = Point.query.filter_by(active=True).order_by(Point.amount.desc()).paginate(page, RESULTS_PER_PAGE, False)
     students = Student.query.filter_by(active=True).order_by(Student.lname)
     form = SearchPointsForm()
     if form.validate_on_submit():
         query = form.pointsSearchField.data
         results = Point.query.filter(or_(Point.why.ilike('%'+query+'%'), Point.type.ilike('%'+query+'%'),
                                          Point.student_id.ilike('%'+query+'%'), Point.issuer_id.ilike('%'+query+'%'),
-                                         Point.supervisor.ilike('%'+query+'%')), Point.active is True)
-        return render_template("points.html", query=query, results=results, students=students, form=form)
-    return render_template("points.html", points=points, students=students, form=form)
+                                         Point.supervisor.ilike('%'+query+'%')))
+        return render_template("points.html", query=query, results=results, students=students, form=form, sort=sort)
+    return render_template("points.html", points=points, students=students, form=form, sort=sort)
 
 
-@main.route('/warnings', methods=['GET', 'POST'])
-@main.route('/warnings/<int:page>', methods=['GET', 'POST'])
+@app.route('/warnings', methods=['GET', 'POST'])
+@app.route('/warnings/<int:page>', methods=['GET', 'POST'])
 def warnings(page=1):
     if not current_user.is_authenticated:
-        return redirect(url_for('.login'))
+        return redirect(url_for('login'))
     warns = Warn.query.order_by(Warn.when.desc()).paginate(page, RESULTS_PER_PAGE, False)
     students = Student.query.filter_by(active=True).order_by(Student.lname)
     form = SearchPointsForm()
@@ -288,10 +303,10 @@ def warnings(page=1):
     return render_template("warnings.html", warns=warns, students=students, form=form)
 
 
-@main.route('/analytics')
+@app.route('/analytics')
 def analytics(chartID='chart_ID', chart_type='line', chart_height=500):
     if not current_user.is_authenticated:
-        return redirect(url_for('.login'))
+        return redirect(url_for('login'))
     results = db.session.query(Point.when).add_column(Point.amount).all()
     timeArray = []
     amountArray = []

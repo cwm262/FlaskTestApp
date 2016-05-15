@@ -27,6 +27,14 @@
 
 $(document).ready(function () {
 
+    $("#sortByDate").on('click', function(){
+        var hiddenField = $('#sort'),
+        val = hiddenField.val();
+
+        hiddenField.val(val === "date_desc" ? "date_asc" : "date_desc");
+        
+    });
+
     $("#viewSummaryBtn").click(function(){
         event.preventDefault();
         var paw = $("#hiddenPaw").val();

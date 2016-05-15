@@ -3,19 +3,9 @@
 
 {% block title %}Student Center Point Tracker - Complete Point List{% endblock %}
 
-{% block scripts %}
-    {{super()}}
-    <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.2.0/list.min.js"></script>
-    <script>
-        var options = {
-          valueNames: [ 'date', 'amount' ]
-        };
-
-        var userList = new List('points', options);
-    </script>
-{% endblock %}
-
 {% block content %}
+
+<input type="hidden" id="sort" value="date_desc">
 
 <div class="container">
     <div id="points" class="table-responsive panel panel-default">
@@ -23,6 +13,7 @@
             <h3 class="panel-title">Points History for Current Employees</h3>
         </div>
         <div class="panel-body">
+            Sorted by: {{ sort }}<br>
             {% if points %}
                 {% if points.has_prev %}<a href="{{ url_for('.points', page=points.prev_num) }}">&lt;&lt; Newer points</a>{% else %}&lt;&lt; Newer points{% endif %} |
                 {% if points.has_next %}<a href="{{ url_for('.points', page=points.next_num) }}">Older points &gt;&gt;</a>{% else %}Older points &gt;&gt;{% endif %}
@@ -37,7 +28,7 @@
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>
-                    <th><button type="button" class="btn btn-default sort" data-sort="date" aria-label="Sort">
+                    <th><button type="button" class="btn btn-default sort" id="sortByDate">
                       <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
                     </button> Date Assigned </th>
                     <th>Type</th>
