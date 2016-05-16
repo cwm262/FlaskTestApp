@@ -27,33 +27,33 @@
 
 $(document).ready(function () {
 
-    $("#sortByDate").on('click', function(){
+    $("#sortByDate").on('click', function () {
         var hiddenField = $('#sort'),
-        val = hiddenField.val();
+            val = hiddenField.val();
 
         hiddenField.val(val === "date_desc" ? "date_asc" : "date_desc");
         
     });
 
-    $("#viewSummaryBtn").click(function(){
+    $("#viewSummaryBtn").click(function () {
         event.preventDefault();
         var paw = $("#hiddenPaw").val();
         var filters = [{"name": "pawprint", "op": "like", "val": paw}];
         $.ajax({
-          url: '/api/students',
-          data: {"q": JSON.stringify({"filters": filters})},
-          dataType: "json",
-          contentType: "application/json"
+            url: '/api/students',
+            data: {"q": JSON.stringify({"filters": filters})},
+            dataType: "json",
+            contentType: "application/json"
         })
-            .done( function(response){
+            .done(function (response) {
                 var resp = response;
                 var student = resp.objects[0];
                 var profileWin = "<div class='panel panel-default'>\
                                     <div class='panel-heading'>\
-                                        <h3>" + student.lname + ", " +  student.fname + "</h3>\
+                                        <h3>" + student.lname + ", " + student.fname + "</h3>\
                                     </div>\
                                     <div class='panel-body'>\
-                                        Pawprint:" +  student.pawprint + "<hr>\
+                                        Pawprint:" + student.pawprint + "<hr>\
                                         <a href='mailto:" + student.pawprint + "@mail.missouri.edu'>" + student.pawprint + "@mail.missouri.edu</a><hr>\
                                         In tracker since: " + moment(student.whenAdded).format('YYYY-MM-DD') + "<hr>\
                                         Point Total: " + student.pointTotal + "\
@@ -63,17 +63,17 @@ $(document).ready(function () {
             })
     });
 
-    $('#viewRewardBtn').click(function(){
+    $('#viewRewardBtn').click(function () {
         event.preventDefault();
         var paw = $("#hiddenPaw").val();
         var filters = [{"name": "student_id", "op": "like", "val": paw}];
         $.ajax({
-          url: '/api/points_removed_history',
-          data: {"q": JSON.stringify({"filters": filters})},
-          dataType: "json",
-          contentType: "application/json"
+            url: '/api/points_removed_history',
+            data: {"q": JSON.stringify({"filters": filters})},
+            dataType: "json",
+            contentType: "application/json"
         })
-            .done( function(response){
+            .done(function (response) {
                 var r = response;
                 var history = r.objects;
                 var hisTable = "<div class='panel panel-default'>\
@@ -95,7 +95,7 @@ $(document).ready(function () {
                                             </tr>\
                                         </thead>\
                                         <tbody class='searchable'>";
-                $.each(history, function(i, val){
+                $.each(history, function (i, val) {
                     hisTable += "<tr class='studentListRow active'>\
                         <td>" + moment(val.when).format('YYYY-MM-DD') + "</td>\
                         <td>" + val.amount + "</td>\
@@ -118,17 +118,17 @@ $(document).ready(function () {
             })
     });
 
-    $('#viewWarnBtn').click(function(){
+    $('#viewWarnBtn').click(function () {
         event.preventDefault();
         var paw = $("#hiddenPaw").val();
         var filters = [{"name": "student_id", "op": "like", "val": paw}];
         $.ajax({
-          url: '/api/warns',
-          data: {"q": JSON.stringify({"filters": filters})},
-          dataType: "json",
-          contentType: "application/json"
+            url: '/api/warns',
+            data: {"q": JSON.stringify({"filters": filters})},
+            dataType: "json",
+            contentType: "application/json"
         })
-            .done( function(response){
+            .done(function (response) {
                 var r = response;
                 var warns = r.objects;
                 var warnTable = "<div class='panel panel-default'>\
@@ -150,7 +150,7 @@ $(document).ready(function () {
                                             </tr>\
                                         </thead>\
                                         <tbody class='searchable'>";
-                $.each(warns, function(i, val){
+                $.each(warns, function (i, val) {
                     warnTable += "<tr class='studentListRow active'>\
                         <td>" + moment(val.when).format('YYYY-MM-DD') + "</td>\
                         <td>" + val.type + "</td>\
@@ -173,17 +173,17 @@ $(document).ready(function () {
             })
     });
 
-    $('#viewPtsBtn').click(function(){
+    $('#viewPtsBtn').click(function () {
         event.preventDefault();
         var paw = $("#hiddenPaw").val();
         var filters = [{"name": "student_id", "op": "like", "val": paw}];
         $.ajax({
-          url: '/api/points',
-          data: {"q": JSON.stringify({"filters": filters})},
-          dataType: "json",
-          contentType: "application/json"
+            url: '/api/points',
+            data: {"q": JSON.stringify({"filters": filters})},
+            dataType: "json",
+            contentType: "application/json"
         })
-            .done( function(response){
+            .done(function (response) {
                 var resp = response;
                 var points = resp.objects;
                 var ptsTable = "<div class='panel panel-default'>\
@@ -206,7 +206,7 @@ $(document).ready(function () {
                                             </tr>\
                                         </thead>\
                                         <tbody class='searchable'>";
-                $.each(points, function(i, val){
+                $.each(points, function (i, val) {
                     ptsTable += "<tr class='studentListRow active'>\
                         <td>" + moment(val.when).format('YYYY-MM-DD') + "</td>\
                         <td>" + val.type + "</td>\

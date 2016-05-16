@@ -1,21 +1,24 @@
 <div class="col-md-4">
     <h1>Students</h1>
-    <div ng-show="error" class="alert alert-danger">{{errorMessage}}</div>
-    <button type="button" class="btn btn-default" id="getStudentsBtn" ng-click="getStudents()">Show All Students</button>
+    <div ng-show="error" class="alert alert-danger">{{ errorMessage }}</div>
     <table class="table table-condensed">
         <thead>
-            <th>Pawprint</th>
-            <th>Last Name</th>
-            <th>First Name</th>
-            <th>Points</th>
+        <th>Pawprint</th>
+        <th>Last Name</th>
+        <th>First Name</th>
+        <th>Points</th>
+        <th>View</th>
         </thead>
         <tbody>
-            <tr ng-repeat="student in students">
-                <td>{{ student.pawprint }}</td>
-                <td>{{ student.lname }}</td>
-                <td>{{ student.fname }}</td>
-                <td>{{ student.pointTotal }}</td>
-            </tr>
+        <tr ng-repeat="student in students">
+            <td>{{ student.pawprint }}</td>
+            <td>{{ student.lname }}</td>
+            <td>{{ student.fname }}</td>
+            <td>{{ student.pointTotal }}</td>
+            <td>
+                <button class="btn btn-primary" ng-click="viewStudentPage(student.pawprint)">View</button>
+            </td>
+        </tr>
         </tbody>
     </table>
 </div>
