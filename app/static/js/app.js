@@ -1,4 +1,4 @@
-var myApp = angular.module('myApp', ['ngRoute', 'ngResource']);
+var myApp = angular.module('myApp', ['ngRoute', 'ngResource', 'angularUtils.directives.dirPagination']);
 
 myApp.config(function ($routeProvider) {
     $routeProvider

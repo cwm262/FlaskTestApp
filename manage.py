@@ -1,9 +1,18 @@
 # import os
 from app import db, models
 from flask.ext.restless import APIManager
+from faker import Faker
+from nameparser import HumanName
+import string
+import random
+import datetime
 from werkzeug.security import generate_password_hash
 
 from app import app
+
+
+def id_generator(size=6, chars=string.ascii_lowercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
 
 if __name__ == '__main__':
     db.drop_all()
@@ -11,13 +20,13 @@ if __name__ == '__main__':
     db.create_all()
     db.session.commit()
     mgr = APIManager(app, flask_sqlalchemy_db=db)
-    mgr.create_api(models.Point, include_columns=['amount', 'type', 'why', 'when', 'supervisor', 'student_id'],
-                   methods=['GET'])
+    mgr.create_api(models.Point, results_per_page=-1, include_columns=['id', 'amount', 'type', 'why', 'when', 'supervisor', 'student_id'],
+                   methods=['GET', 'POST'])
     # mgr.create_api(models.Warn, include_columns=['type', 'why', 'when', 'supervisor', 'student_id'],
     #                methods=['GET'])
     # mgr.create_api(models.PointsRemovedHistory, include_columns=['amount', 'why', 'when', 'issuer_id',
     #                                                              'student_id'], methods=['GET'])
-    mgr.create_api(models.Student, methods=['GET', 'POST', 'DELETE'])
+    mgr.create_api(models.Student, results_per_page=-1, methods=['GET', 'POST'])
     # username = 'bob'
     # password = 'password123'
     # pwhash = generate_password_hash(password)
@@ -25,14 +34,17 @@ if __name__ == '__main__':
     #     user = models.User(username=username, password=pwhash, approved=True)
     #     db.session.add(user)
     #     db.session.commit()
-    if not models.Student.query.filter_by(pawprint='rvts6').first():
-        student = models.Student('rvts6', 'Reid', 'Vardell')
+    # if not models.Student.query.filter_by(pawprint='rvts6').first():
+    fake = Faker()
+    for _ in range(0, 20):
+        name = HumanName(fake.name())
+        paw = id_generator()
+        student = models.Student(paw, name.first, name.last)
+        pt = random.randint(1, 3)
+        point = models.Point(pt, "Other", "Random", datetime.datetime.now(), "bob", "bob", paw)
         db.session.add(student)
-        db.session.commit()
-    if not models.Student.query.filter_by(pawprint='ted4').first():
-        student = models.Student('ted4', 'Ted', 'Thomas')
-        db.session.add(student)
-        db.session.commit()
+        db.session.add(point)
+    db.session.commit()
     # if not models.InfractionType.query.get(1):
     #     infraction1 = models.InfractionType('No Call, No Show', 3)
     #     infraction2 = models.InfractionType('Left Early w/o Permission', 2)

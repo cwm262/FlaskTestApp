@@ -3,3 +3,27 @@
 <div class="row">
     Full Name: {{ studentData.fname }} {{ studentData.lname }}
 </div>
+
+<table class="table">
+    <thead>
+    <th>When</th>
+    <th>Amount</th>
+    <th>Type</th>
+    </thead>
+    <tbody>
+    <div class="col-xs-4">
+        <label for="search">Results per page:</label>
+        <input type="number" min="1" max="100" class="form-control" ng-model="pageSize">
+    </div>
+    <tr dir-paginate="item in studentPoints|itemsPerPage:pageSize">
+        <td>{{ item.when }}</td>
+        <td>{{ item.amount }}</td>
+        <td>{{ item.type }}</td>
+    </tr>
+    </tbody>
+</table>
+
+<div>
+    <dir-pagination-controls boundary-links="true"
+                             template-url="static/partials/dirPagination.tpl.html"></dir-pagination-controls>
+</div>

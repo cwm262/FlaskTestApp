@@ -1,7 +1,7 @@
 <div class="col-md-4">
     <h1>Students</h1>
     <div ng-show="error" class="alert alert-danger">{{ errorMessage }}</div>
-    <table class="table table-condensed">
+    <table class="table">
         <thead>
         <th>Pawprint</th>
         <th>Last Name</th>
@@ -10,15 +10,28 @@
         <th>View</th>
         </thead>
         <tbody>
-        <tr ng-repeat="student in students">
-            <td>{{ student.pawprint }}</td>
-            <td>{{ student.lname }}</td>
-            <td>{{ student.fname }}</td>
-            <td>{{ student.pointTotal }}</td>
+        <div class="col-xs-4">
+            <label for="search">Search:</label>
+            <input ng-model="q" id="search" class="form-control" placeholder="Filter text">
+        </div>
+        <div class="col-xs-4">
+            <label for="search">Results per page:</label>
+            <input type="number" min="1" max="100" class="form-control" ng-model="pageSize">
+        </div>
+        <tr dir-paginate="item in students|filter:q|itemsPerPage:pageSize">
+            <td>{{ item.pawprint }}</td>
+            <td>{{ item.lname }}</td>
+            <td>{{ item.fname }}</td>
+            <td>{{ item.pointTotal }}</td>
             <td>
-                <button class="btn btn-primary" ng-click="viewStudentPage(student.pawprint)">View</button>
+                <button class="btn btn-primary" ng-click="viewStudentPage(item.pawprint)">View</button>
             </td>
         </tr>
         </tbody>
     </table>
+</div>
+
+<div>
+    <dir-pagination-controls boundary-links="true"
+                             template-url="static/partials/dirPagination.tpl.html"></dir-pagination-controls>
 </div>

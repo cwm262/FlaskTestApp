@@ -88,22 +88,32 @@ angular.module('myApp').controller('studentsController',
     ['$scope', '$http', '$location',
         function ($scope, $http, $location) {
 
+            $scope.pageSize = 10;
+
             $http.get('/api/students')
                 .success(function (data) {
                     $scope.students = data.objects;
                 });
 
-            $scope.viewStudentPage = function(paw) {
-                $location.path("/students/"+paw);
+            $scope.viewStudentPage = function (paw) {
+                $location.path("/students/" + paw);
             }
         }]);
 
 angular.module('myApp').controller('viewStudentController',
     ['$scope', '$http', '$location', '$routeParams', '$resource',
         function ($scope, $http, $location, $routeParams, $resource) {
-            var student = $resource("/api/students/:pawprint", {},{
-               'query': {method: 'GET', isArray:false}
+            $scope.pageSize = 5;
+            $http.get('/api/students/' + $routeParams.paw).success(function (data) {
+                $scope.studentData = data;
             });
-            $scope.studentData = student.get({pawprint: $routeParams.paw});
-            
-        }]);
+            var filters = [{"name": "student_id", "op": "like", "val": $routeParams.paw}];
+            $http.get('/api/points', {
+                params: {
+                    q: JSON.stringify({"filters": filters})
+                }
+            }).success(function (data) {
+                $scope.studentPoints = data.objects;
+            });
+        }
+    ]);
