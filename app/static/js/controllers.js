@@ -2,6 +2,10 @@ angular.module('myApp').controller('navController',
     ['$scope', '$location', 'AuthService',
         function ($scope, $location, AuthService) {
 
+            $scope.isActive = function(viewLocation){
+                return viewLocation === $location.path();
+            };
+
             $scope.goToStudents = function () {
                 $location.path('/students');
             };
@@ -22,6 +26,10 @@ angular.module('myApp').controller('navController',
 angular.module('myApp').controller('loginController',
     ['$scope', '$location', 'AuthService',
         function ($scope, $location, AuthService) {
+
+            if(AuthService.isLoggedIn()){
+                $location.path('/');
+            }
 
             $scope.goToRegister = function () {
                 $location.path('/register');
@@ -57,6 +65,10 @@ angular.module('myApp').controller('registerController',
     ['$scope', '$location', 'AuthService',
         function ($scope, $location, AuthService) {
 
+            if(AuthService.isLoggedIn()){
+                $location.path('/');
+            }
+
             $scope.register = function () {
 
                 // initial values
@@ -89,6 +101,8 @@ angular.module('myApp').controller('studentsController',
         function ($scope, $http, $location) {
 
             $scope.pageSize = 10;
+            $scope.sortType = 'pawprint';
+            $scope.sortReverse = false;
 
             $http.get('/api/students')
                 .success(function (data) {
@@ -101,9 +115,10 @@ angular.module('myApp').controller('studentsController',
         }]);
 
 angular.module('myApp').controller('viewStudentController',
-    ['$scope', '$http', '$location', '$routeParams', '$resource',
-        function ($scope, $http, $location, $routeParams, $resource) {
+    ['$scope', '$http', '$location', '$routeParams',
+        function ($scope, $http, $location, $routeParams) {
             $scope.pageSize = 5;
+            $scope.paw = $routeParams.paw;
             $http.get('/api/students/' + $routeParams.paw).success(function (data) {
                 $scope.studentData = data;
             });
@@ -115,5 +130,23 @@ angular.module('myApp').controller('viewStudentController',
             }).success(function (data) {
                 $scope.studentPoints = data.objects;
             });
+            $scope.punish = function(id){
+                $location.path('/students/'+id+'/punish');    
+            };
+        }
+    ]);
+
+angular.module('myApp').controller('punishController',
+    ['$scope', '$http', '$location', '$routeParams',
+        function ($scope, $http, $location, $routeParams) {
+            $scope.paw = $routeParams.paw;
+            $http.get('/api/students/' + $routeParams.paw).success(function (data) {
+                $scope.studentData = data;
+            });
+            $scope.whyPunish = '';
+            $http.get('/api/infractionTypes').success(function(data){
+                $scope.infractions = data.objects;
+            });
+            $scope.selected = '';
         }
     ]);

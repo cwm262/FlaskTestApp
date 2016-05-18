@@ -1,35 +1,49 @@
-<div class="col-md-4">
-    <h1>Students</h1>
-    <div ng-show="error" class="alert alert-danger">{{ errorMessage }}</div>
-    <table class="table">
-        <thead>
-        <th>Pawprint</th>
-        <th>Last Name</th>
-        <th>First Name</th>
-        <th>Points</th>
-        <th>View</th>
-        </thead>
-        <tbody>
-        <div class="col-xs-4">
-            <label for="search">Search:</label>
-            <input ng-model="q" id="search" class="form-control" placeholder="Filter text">
-        </div>
-        <div class="col-xs-4">
-            <label for="search">Results per page:</label>
-            <input type="number" min="1" max="100" class="form-control" ng-model="pageSize">
-        </div>
-        <tr dir-paginate="item in students|filter:q|itemsPerPage:pageSize">
-            <td>{{ item.pawprint }}</td>
-            <td>{{ item.lname }}</td>
-            <td>{{ item.fname }}</td>
-            <td>{{ item.pointTotal }}</td>
-            <td>
-                <button class="btn btn-primary" ng-click="viewStudentPage(item.pawprint)">View</button>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+<h2>Students</h2>
+<div ng-show="error" class="alert alert-danger">{{ errorMessage }}</div>
+<table class="table">
+    <thead>
+    <th ng-click="sortType='pawprint';sortReverse = !sortReverse">
+        Pawprint
+        <span ng-show="sortType == 'pawprint' && !sortReverse" class="fa fa-caret-down"></span>
+        <span ng-show="sortType == 'pawprint' && sortReverse" class="fa fa-caret-up"></span>
+    </th>
+    <th ng-click="sortType='lname';sortReverse = !sortReverse">
+        Last Name
+        <span ng-show="sortType == 'lname' && !sortReverse" class="fa fa-caret-down"></span>
+        <span ng-show="sortType == 'lname' && sortReverse" class="fa fa-caret-up"></span>
+    </th>
+    <th ng-click="sortType='fname';sortReverse = !sortReverse">
+        First Name
+        <span ng-show="sortType == 'fname' && !sortReverse" class="fa fa-caret-down"></span>
+        <span ng-show="sortType == 'fname' && sortReverse" class="fa fa-caret-up"></span>
+    </th>
+    <th ng-click="sortType='pointTotal';sortReverse = !sortReverse">
+        Points
+        <span ng-show="sortType == 'pointTotal' && !sortReverse" class="fa fa-caret-down"></span>
+        <span ng-show="sortType == 'pointTotal' && sortReverse" class="fa fa-caret-up"></span>
+    </th>
+    <th>View</th>
+    </thead>
+    <tbody>
+    <div class="form-group col-xs-8">
+        <label for="search">Search:</label>
+        <input ng-model="q" id="search" class="form-control" placeholder="Search here...">
+    </div>
+    <div class="form-group col-xs-2">
+        <label for="search">Results per page:</label>
+        <input type="number" min="1" max="100" class="form-control" ng-model="pageSize">
+    </div>
+    <tr dir-paginate="item in students|filter:q|itemsPerPage:pageSize|orderBy:sortType:sortReverse">
+        <td>{{ item.pawprint }}</td>
+        <td>{{ item.lname }}</td>
+        <td>{{ item.fname }}</td>
+        <td>{{ item.pointTotal }}</td>
+        <td>
+            <button class="btn btn-primary" ng-click="viewStudentPage(item.pawprint)">View</button>
+        </td>
+    </tr>
+    </tbody>
+</table>
 
 <div>
     <dir-pagination-controls boundary-links="true"

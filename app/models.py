@@ -127,12 +127,14 @@ class Point(db.Model):
 #         self.student_id = student_id
 #
 #
-# class InfractionType(db.Model):
-#     __tablename__ = 'infractionTypes'
-#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-#     description = db.Column(db.String(50), nullable=False)
-#     value = db.Column(db.Float, default=0)
-#
-#     def __init__(self, description, value):
-#         self.description = description
-#         self.value = value
+
+
+class InfractionType(db.Model):
+    __tablename__ = 'infractionTypes'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    description = db.Column(db.String(50), nullable=False)
+    value = db.Column(db.Float, default=0)
+
+    def __init__(self, description, value):
+        self.description = description
+        self.value = value

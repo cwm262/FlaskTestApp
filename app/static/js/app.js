@@ -26,6 +26,11 @@ myApp.config(function ($routeProvider) {
             controller: 'viewStudentController',
             access: {restricted: true}
         })
+        .when('/students/:paw/punish', {
+            templateUrl: 'static/partials/punish.html',
+            controller: 'punishController',
+            access: {restricted: true}
+        })
         .when('/two', {
             template: '<h1>This is page two!</h1>',
             access: {restricted: false}
